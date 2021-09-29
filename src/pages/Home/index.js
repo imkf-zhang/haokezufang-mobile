@@ -13,7 +13,7 @@ const tabItems = [
   {
     title: "首页",
     icon: "icon-ind",
-    path: "/home/index",
+    path: "/home",
   },
   {
     title: "找房",
@@ -60,7 +60,8 @@ class Home extends React.Component {
   render() {
     return (
       <div className="home">
-        <Route path="/home/index" component={Index}></Route>
+        {/* 当路由是/home时，匹配到了home组件，home组件里又匹配到了下面的路由，故展示 */}
+        <Route exact path="/home" component={Index}></Route>
         <Route path="/home/list" component={List}></Route>
         <Route path="/home/news" component={News}></Route>
         <Route path="/home/my" component={My}></Route>
