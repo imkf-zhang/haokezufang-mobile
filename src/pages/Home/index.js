@@ -1,5 +1,5 @@
 import React from "react";
-import "./index.css"
+import "./index.css";
 import { Route } from "react-router-dom";
 import { TabBar } from "antd-mobile";
 // 组件
@@ -7,6 +7,31 @@ import Index from "../Index/index";
 import List from "../List/index";
 import News from "../News/index";
 import My from "../My/index";
+
+// 导航栏数据
+const tabItems = [
+  {
+    title: "首页",
+    icon: "icon-ind",
+    path: "/home/index",
+  },
+  {
+    title: "找房",
+    icon: "icon-findHouse",
+    path: "/home/list",
+  },
+  {
+    title: "咨询",
+    icon: "icon-infom",
+    path: "/home/news",
+  },
+  {
+    title: "我的",
+    icon: "icon-my",
+    path: "/home/my",
+  },
+];
+
 class Home extends React.Component {
   constructor(props) {
     super(props);
@@ -14,6 +39,24 @@ class Home extends React.Component {
       selectedTab: this.props.location.pathname,
     };
   }
+  renderTabItem = () => {
+    return tabItems.map((item) => (
+      <TabBar.Item
+        title={item.title}
+        key={item.title}
+        icon={<i className={"iconfont " + item.icon} />}
+        selectedIcon={<i className={`iconfont ${item.icon}`} />}
+        selected={this.state.selectedTab === item.path}
+        onPress={() => {
+          this.setState({
+            selectedTab: item.path,
+          });
+          this.props.history.push(item.path);
+        }}
+      ></TabBar.Item>
+    ));
+  };
+
   render() {
     return (
       <div className="home">
@@ -21,81 +64,10 @@ class Home extends React.Component {
         <Route path="/home/list" component={List}></Route>
         <Route path="/home/news" component={News}></Route>
         <Route path="/home/my" component={My}></Route>
-          <TabBar
-            tintColor="#21b97a"
-            barTintColor="white"
-            noRenderContent
-          >
-            <TabBar.Item
-              title="首页"
-              key="首页"
-              icon={
-                <i className="iconfont icon-ind" />
-              }
-              selectedIcon={
-                <i className="iconfont icon-ind" />
-              }
-              selected={this.state.selectedTab === "/home/index"}
-              onPress={() => {
-                this.setState({
-                  selectedTab: "/home/index",
-                });
-                this.props.history.push('/home/index')
-              }}
-              data-seed="logId"
-            >
-            </TabBar.Item>
-            <TabBar.Item
-              icon={
-                <i className="iconfont icon-findHouse" />
-              }
-              selectedIcon={
-                <i className="iconfont icon-findHouse" />
-              }
-              title="找房"
-              key="找房"
-              selected={this.state.selectedTab === "/home/list"}
-              onPress={() => {
-                this.setState({
-                  selectedTab: '/home/list',
-                });
-                this.props.history.push('/home/list')
-              }}
-              data-seed="logId1"
-            >
-            </TabBar.Item>
-            <TabBar.Item
-              icon={
-                <i className="iconfont icon-infom" />
-              }
-              selectedIcon={<i className="iconfont icon-infom" />}
-              title="咨询"
-              key="咨询"
-              selected={this.state.selectedTab === "/home/news"}
-              onPress={() => {
-                this.setState({
-                  selectedTab: "/home/news",
-                });
-                this.props.history.push('/home/news')
-              }}
-            >
-            </TabBar.Item>
-            <TabBar.Item
-              icon={<i className="iconfont icon-my" />}
-              selectedIcon={<i className="iconfont icon-my" />}
-              title="我的"
-              key="我的"
-              selected={this.state.selectedTab === "/home/my"}
-              onPress={() => {
-                this.setState({
-                  selectedTab: "/home/my",
-                });
-                this.props.history.push('/home/my')
-              }}
-            >
-            </TabBar.Item>
-          </TabBar>
-        </div>
+        <TabBar tintColor="#21b97a" barTintColor="white" noRenderContent>
+          {this.renderTabItem()}
+        </TabBar>
+      </div>
     );
   }
 }

@@ -1,4 +1,3 @@
-// import { Button } from 'antd-mobile';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
 import CityList from "./pages/CityList";
