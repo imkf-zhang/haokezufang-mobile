@@ -9,3 +9,6 @@ body {
   touch-action: pan-y;
   box-sizing: border-box;
 }
+h2 {
+  margin: 0;
+}
