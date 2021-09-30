@@ -6,5 +6,6 @@ body {
   background-color: #fff;
 }
 * {
+  touch-action: pan-y;
   box-sizing: border-box;
 }
