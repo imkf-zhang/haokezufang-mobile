@@ -56,7 +56,14 @@ class Home extends React.Component {
       ></TabBar.Item>
     ));
   };
-
+  componentDidUpdate (pre) {
+    if (pre.location.pathname !== this.props.location.pathname) { 
+        this.setState({
+          selectedTab: this.props.location.pathname
+        })
+    }
+  
+  }
   render() {
     return (
       <div className="home">
