@@ -1,5 +1,5 @@
 import React from "react";
-import { Carousel, Flex } from "antd-mobile";
+import { Carousel, Flex, Grid, WingBlank } from "antd-mobile";
 
 import axios from "axios";
 import "./index.css";
@@ -18,14 +18,50 @@ class Index extends React.Component {
   state = {
     swipers: [],
     isSwiperLoading: false,
+    // 租房小组数据
+    groups: [],
+    // 最新咨询
+    news: [],
   };
   async getSwipers() {
     const { data: res } = await axios.get("http://localhost:8080/home/swiper");
-    console.log(res);
     this.setState(() => {
       return {
         swipers: res.body,
         isSwiperLoading: true,
+      };
+    });
+  }
+  async getGroups() {
+    const { data: res } = await axios.get("http://localhost:8080/home/groups", {
+      params: {
+        area: "AREA|88cff55c-aaa4-e2e0",
+      },
+    });
+    this.setState(() => {
+      return {
+        groups: res.body,
+      };
+    });
+  }
+  async getSwipers() {
+    const { data: res } = await axios.get("http://localhost:8080/home/swiper");
+    this.setState(() => {
+      return {
+        swipers: res.body,
+        isSwiperLoading: true,
+      };
+    });
+  }
+  async getNews() {
+    const { data: res } = await axios.get("http://localhost:8080/home/news", {
+      params: {
+        area: "AREA|88cff55c-aaa4-e2e0",
+      },
+    });
+    this.setState(() => {
+      return {
+        news: res.body,
       };
     });
   }
@@ -61,22 +97,71 @@ class Index extends React.Component {
       );
     });
   };
+  renderNews = () => {
+    return this.state.news.map( item => (
+      <div className='news-item' key={item.id}>
+        <div className='imgwrap'>
+          <img 
+           className='img'
+           src={`http://localhost:8080${item.imgSrc}`}
+          />
+        </div>
+        <Flex className='content' direction='column' justify='between'>
+          <h3 className='title'>{item.title}</h3>
+          <Flex className='info' justify='between'>
+            <span>{item.from}</span>
+            <span>{item.date}</span>
+          </Flex>
+        </Flex>
+      </div>
+    ))
+  }
   componentDidMount() {
     this.getSwipers();
+    this.getGroups();
+    this.getNews();
   }
   render() {
     return (
       <div className="index">
+        {/* 轮播图 */}
         <div className="swiper">
           {this.state.isSwiperLoading ? (
-            <Carousel autoplay={true} infinite autoplayInterval={2000}>
+            <Carousel autoplay={false} infinite autoplayInterval={2000}>
               {this.renderSwipers()}
             </Carousel>
           ) : (
             ""
           )}
         </div>
+        {/* 导航 */}
         <Flex className="nav">{this.renderNavs()}</Flex>
+        {/* 租房小组 */}
+        <div className="group">
+          <h3 className="group-title">
+            租房小组<span className="more">更多</span>
+          </h3>
+          <Grid
+            data={this.state.groups}
+            columnNum={2}
+            square={false}
+            hasLine={false}
+            renderItem={(item) => (
+              <Flex className="group-item" justify="around" key={item.id}>
+                <div className="desc">
+                  <p className="title">{item.title}</p>
+                  <span className="info">{item.desc}</span>
+                </div>
+                <img src={`http://localhost:8080${item.imgSrc}`} alt="" />
+              </Flex>
+            )}
+          />
+        </div>
+        {/* 最新咨询 */}
+        <div className="news">
+          <h3 className="group-title">最新资讯</h3>
+          <WingBlank size="md">{this.renderNews()}</WingBlank>
+        </div>
       </div>
     );
   }

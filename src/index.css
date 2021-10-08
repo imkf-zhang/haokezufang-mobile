@@ -9,6 +9,7 @@ body {
   touch-action: pan-y;
   box-sizing: border-box;
 }
-h2 {
+h2,
+p {
   margin: 0;
 }
