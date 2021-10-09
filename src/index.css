@@ -5,6 +5,15 @@ body {
   color: #333;
   background-color: #fff;
 }
+#root,
+.App {
+  height: 100%;
+}
+body {
+ margin: 0px;
+ padding: 0px;
+}
+
 * {
   touch-action: pan-y;
   box-sizing: border-box;

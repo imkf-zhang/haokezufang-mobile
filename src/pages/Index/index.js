@@ -14,6 +14,11 @@ const navs = [
   { id: 3, path: "/home/dtzf", nav: Nav3, title: "地图找房" },
   { id: 4, path: "/home/qcz", nav: Nav4, title: "去出租" },
 ];
+// 获取地理位置信息
+navigator.geolocation.getCurrentPosition(position => {
+  console.log('当前地理位置', position)
+})
+
 class Index extends React.Component {
   state = {
     swipers: [],
@@ -133,6 +138,34 @@ class Index extends React.Component {
           ) : (
             ""
           )}
+          {/* 搜索框 */}
+          <Flex className="search-box">
+            {/* 左侧白色区域 */}
+            <Flex className="search">
+              {/* 位置 */}
+              <div
+                className="location"
+                onClick={() => this.props.history.push('/citylist')}
+              >
+                <span className="name">上海</span>
+                <i className="iconfont icon-arrow" />
+              </div>
+
+              {/* 搜索表单 */}
+              <div
+                className="form"
+                onClick={() => this.props.history.push('/search')}
+              >
+                <i className="iconfont icon-seach" />
+                <span className="text">请输入小区或地址</span>
+              </div>
+            </Flex>
+            {/* 右侧地图图标 */}
+            <i
+              className="iconfont icon-map"
+              onClick={() => this.props.history.push('/map')}
+            />
+          </Flex>
         </div>
         {/* 导航 */}
         <Flex className="nav">{this.renderNavs()}</Flex>
