@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Link,Redirect} from "react-router-dom";
+import { BrowserRouter as Router, Route,Redirect} from "react-router-dom";
 import Home from "./pages/Home";
 import CityList from "./pages/CityList";
 import Map from "./pages/Map"

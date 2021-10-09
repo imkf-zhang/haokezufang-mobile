@@ -1,7 +1,7 @@
 import React from "react";
 import { Carousel, Flex, Grid, WingBlank } from "antd-mobile";
-
 import axios from "axios";
+import { getCurrentCity } from "../../utils/index"
 import "./index.css";
 import Nav1 from "../../assets/images/nav-1.png";
 import Nav2 from "../../assets/images/nav-2.png";
@@ -119,27 +119,16 @@ class Index extends React.Component {
       </div>
     ));
   };
-  componentDidMount() {
+  async componentDidMount() {
     this.getSwipers();
     this.getGroups();
     this.getNews();
-    const myCity = new window.BMap.LocalCity();
-    myCity.get(async (res) => {
-      //  console.log(res.name)
-      const { data: reslust } = await axios.get(
-        "http://localhost:8080/area/info",
-        {
-          params: {
-            name: res.name,
-          },
-        }
-      );
+    const curCity = await getCurrentCity();
       this.setState(() => {
         return {
-          curCityName: reslust.body.label
+          curCityName: curCity.label
         }
       })
-    });
   }
   render() {
     return (
