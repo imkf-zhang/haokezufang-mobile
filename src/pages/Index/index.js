@@ -15,10 +15,9 @@ const navs = [
   { id: 4, path: "/home/qcz", nav: Nav4, title: "去出租" },
 ];
 // 获取地理位置信息
-navigator.geolocation.getCurrentPosition(position => {
-  console.log('当前地理位置', position)
-})
-
+// navigator.geolocation.getCurrentPosition(position => {
+//   console.log('当前地理位置', position)
+// })
 class Index extends React.Component {
   state = {
     swipers: [],
@@ -27,6 +26,8 @@ class Index extends React.Component {
     groups: [],
     // 最新咨询
     news: [],
+    // 当前城市名称
+    curCityName: ''
   };
   async getSwipers() {
     const { data: res } = await axios.get("http://localhost:8080/home/swiper");
@@ -103,28 +104,42 @@ class Index extends React.Component {
     });
   };
   renderNews = () => {
-    return this.state.news.map( item => (
-      <div className='news-item' key={item.id}>
-        <div className='imgwrap'>
-          <img 
-           className='img'
-           src={`http://localhost:8080${item.imgSrc}`}
-          />
+    return this.state.news.map((item) => (
+      <div className="news-item" key={item.id}>
+        <div className="imgwrap">
+          <img className="img" src={`http://localhost:8080${item.imgSrc}`} />
         </div>
-        <Flex className='content' direction='column' justify='between'>
-          <h3 className='title'>{item.title}</h3>
-          <Flex className='info' justify='between'>
+        <Flex className="content" direction="column" justify="between">
+          <h3 className="title">{item.title}</h3>
+          <Flex className="info" justify="between">
             <span>{item.from}</span>
             <span>{item.date}</span>
           </Flex>
         </Flex>
       </div>
-    ))
-  }
+    ));
+  };
   componentDidMount() {
     this.getSwipers();
     this.getGroups();
     this.getNews();
+    const myCity = new window.BMap.LocalCity();
+    myCity.get(async (res) => {
+      //  console.log(res.name)
+      const { data: reslust } = await axios.get(
+        "http://localhost:8080/area/info",
+        {
+          params: {
+            name: res.name,
+          },
+        }
+      );
+      this.setState(() => {
+        return {
+          curCityName: reslust.body.label
+        }
+      })
+    });
   }
   render() {
     return (
@@ -145,16 +160,16 @@ class Index extends React.Component {
               {/* 位置 */}
               <div
                 className="location"
-                onClick={() => this.props.history.push('/citylist')}
+                onClick={() => this.props.history.push("/citylist")}
               >
-                <span className="name">上海</span>
+                <span className="name">{this.state.curCityName}</span>
                 <i className="iconfont icon-arrow" />
               </div>
 
               {/* 搜索表单 */}
               <div
                 className="form"
-                onClick={() => this.props.history.push('/search')}
+                onClick={() => this.props.history.push("/search")}
               >
                 <i className="iconfont icon-seach" />
                 <span className="text">请输入小区或地址</span>
@@ -163,7 +178,7 @@ class Index extends React.Component {
             {/* 右侧地图图标 */}
             <i
               className="iconfont icon-map"
-              onClick={() => this.props.history.push('/map')}
+              onClick={() => this.props.history.push("/map")}
             />
           </Flex>
         </div>
