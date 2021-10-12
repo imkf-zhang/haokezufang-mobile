@@ -32,40 +32,70 @@ const formatCityData = (list) => {
  * @returns { String} 处理好的索引值
  */
 const formatCityIndex = (item) => {
-  if(item === "#") {
-    return "当前定位"
-  } else if(item === "hot") {
-    return "热门城市"
+  if (item === "#") {
+    return "当前定位";
+  } else if (item === "hot") {
+    return "热门城市";
   } else {
-    return item
+    return item;
   }
-}
+};
+// 每一行 title 高度
+const TITLE_HEIGHT = 36;
+const NAME_HEIGHT = 50;
 class CityList extends React.Component {
   state = {
     cityList: {},
-    cityIndex: []
+    cityIndex: [],
+    activeIndex: 0
   };
   /**
- * 渲染每行数据的方法
- * @param {*} param0
- * @returns jsx
- */
- rowRenderer = ({
-  key, // Unique key within array of rows key值，唯一值
-  index, // Index of row within collection 索引
-  isScrolling, // The List is currently being scrolled 当前项是否在滚动中
-  isVisible, // This row is visible within the List (eg it is not an overscanned row) 当前项是list中是否可见
-  style, // 重点属性，一定要给每一行数据添加样式，作用，指定每一行位置。
-  // Style object to be applied to row (to position it)
-}) => {
-  
-  return (
-    <div key={key} style={style} className="city">
-      <div className="title">{formatCityIndex(this.state.cityIndex[index])}</div>
-      {/* {this.state.cityList[this.state.cityIndex[index]].map( item => (<div className="name">{item.label}</div>) )} */}
-    </div>
-  );
-}
+   * 渲染每行数据的方法
+   * @param {*} param0
+   * @returns jsx
+   */
+  rowRenderer = ({
+    key, // Unique key within array of rows key值，唯一值
+    index, // Index of row within collection 索引
+    isScrolling, // The List is currently being scrolled 当前项是否在滚动中
+    isVisible, // This row is visible within the List (eg it is not an overscanned row) 当前项是list中是否可见
+    style, // 重点属性，一定要给每一行数据添加样式，作用，指定每一行位置。
+    // Style object to be applied to row (to position it)
+  }) => {
+    return (
+      <div key={key} style={style} className="city">
+        <div className="title">
+          {formatCityIndex(this.state.cityIndex[index])}
+        </div>
+        {this.state.cityList[this.state.cityIndex[index]].map((item) => (
+          <div className="name" key={item.value}>
+            {item.label}
+          </div>
+        ))}
+      </div>
+    );
+  };
+  /**
+   * 获取每行高度
+   * @param { Number} index
+   * @returns {Number} 当前行的高度
+   */
+  getRowHeight = ({ index }) => {
+    let height =
+      TITLE_HEIGHT +
+      this.state.cityList[this.state.cityIndex[index]].length * NAME_HEIGHT;
+    return height;
+  };
+  /**
+   * 右侧索引
+   */
+  renderCityIndex = () => {
+    return this.state.cityIndex.map((item,index) => (
+      <li className="city-index-item" key={item}>
+        <span className={this.state.activeIndex === index ? "index-active": ""}>{item === 'hot'? '热':item}</span>
+      </li>
+    ));
+  };
   async getCityList() {
     const { data: res } = await axios.get("http://localhost:8080/area/city", {
       params: {
@@ -81,12 +111,12 @@ class CityList extends React.Component {
     const curCity = await getCurrentCity();
     cityList["#"] = [curCity];
     cityIndex.unshift("#");
-    this.setState( () => {
+    this.setState(() => {
       return {
         cityList: cityList,
-        cityIndex: cityIndex
-      }
-    } )
+        cityIndex: cityIndex,
+      };
+    });
   }
   componentDidMount() {
     this.getCityList();
@@ -106,12 +136,14 @@ class CityList extends React.Component {
             <List
               height={height}
               rowCount={this.state.cityIndex.length}
-              rowHeight={100}
+              rowHeight={this.getRowHeight}
               rowRenderer={this.rowRenderer}
               width={width}
             />
           )}
         </AutoSizer>
+        {/* 右侧索引列表 */}
+        <ul className="city-index">{this.renderCityIndex()}</ul>
       </div>
     );
   }
