@@ -1,4 +1,5 @@
 import React from "react";
+import NavHeader from "../../components/NavHeader";
 import "./index.css";
 class Map extends React.Component {
   // 容器准备好了再进行初始化地图实例
@@ -13,6 +14,9 @@ class Map extends React.Component {
   render() {
     return (
       <div className="map">
+        <NavHeader>
+          地图找房
+        </NavHeader>
         <div id="container"></div>
       </div>
     );

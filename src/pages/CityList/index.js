@@ -3,6 +3,7 @@ import axios from "axios";
 import { getCurrentCity } from "../../utils/index";
 import { NavBar, Toast } from "antd-mobile";
 import { AutoSizer, List } from "react-virtualized";
+import NavHeader from "../../components/NavHeader";
 import "./index.css";
 
 /**
@@ -43,7 +44,7 @@ const formatCityIndex = (item) => {
 // 每一行 title 高度
 const TITLE_HEIGHT = 36;
 const NAME_HEIGHT = 50;
-const CITYS = ['北京','上海','广州','深圳'];
+const CITYS = ["北京", "上海", "广州", "深圳"];
 class CityList extends React.Component {
   constructor(props) {
     super(props);
@@ -75,7 +76,13 @@ class CityList extends React.Component {
           {formatCityIndex(this.state.cityIndex[index])}
         </div>
         {this.state.cityList[this.state.cityIndex[index]].map((item) => (
-          <div className="name" key={item.value} onClick={() => {this.changeCity(item)}}>
+          <div
+            className="name"
+            key={item.value}
+            onClick={() => {
+              this.changeCity(item);
+            }}
+          >
             {item.label}
           </div>
         ))}
@@ -83,20 +90,20 @@ class CityList extends React.Component {
     );
   };
   /**
-   * 
+   *
    * @param { String } item
-   * @returns 
+   * @returns
    */
-   changeCity = (item) => {
-      const {label,value } = item;
-      console.log(item,label)
-      if(CITYS.indexOf(label) > -1) {
-        localStorage.setItem("hkzf_city", JSON.stringify(item));
-        this.props.history.go(-1)
-      }else {
-        Toast.info('该城市暂无房源数据', 1,null,false);
-      }
-   }
+  changeCity = (item) => {
+    const { label, value } = item;
+    console.log(item, label);
+    if (CITYS.indexOf(label) > -1) {
+      localStorage.setItem("hkzf_city", JSON.stringify(item));
+      this.props.history.go(-1);
+    } else {
+      Toast.info("该城市暂无房源数据", 1, null, false);
+    }
+  };
   /**
    * 获取每行高度
    * @param { Number} index
@@ -177,13 +184,7 @@ class CityList extends React.Component {
   render() {
     return (
       <div className="citylist">
-        <NavBar
-          mode="light"
-          icon={<i className="iconfont icon-back" />}
-          onLeftClick={() => this.props.history.go(-1)}
-        >
-          城市选择
-        </NavBar>
+        <NavHeader>城市选择</NavHeader>
         <AutoSizer>
           {({ height, width }) => (
             <List

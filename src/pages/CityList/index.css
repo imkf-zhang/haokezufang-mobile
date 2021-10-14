@@ -4,11 +4,6 @@
 }
 .citylist .am-navbar-light {
   margin-top: -45px;
-  background-color: #f6f5f6;
-  color: #333;
-}
-.citylist .am-navbar-light .am-navbar-title {
-  color: #333;
 }
 .city .title {
   font-size: 14px;
