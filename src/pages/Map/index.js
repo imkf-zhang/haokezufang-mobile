@@ -1,8 +1,9 @@
 import React from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import NavHeader from "../../components/NavHeader";
 import styles from "./index.module.css";
-
+import { Toast } from "antd-mobile";
 const BMap = window.BMap;
 const labelStyle = {
   cursor: "pointer",
@@ -15,10 +16,19 @@ const labelStyle = {
 };
 const { label, value } = JSON.parse(localStorage.getItem("hkzf_city"));
 class Map extends React.Component {
+  state = {
+    // 小区下的房源列表
+    housesList: [],
+    // 表示是否展示房源列表
+    isShowList: false,
+  };
   // 容器准备好了再进行初始化地图实例
   componentDidMount() {
     this.initMap();
   }
+  /**
+   * 初始化地图
+   */
   initMap = () => {
     // 创建地图实例
     const map = new BMap.Map("container");
@@ -37,6 +47,13 @@ class Map extends React.Component {
       },
       label
     );
+    map.addEventListener("movestart", () => {
+      if (this.state.isShowList) {
+        this.setState({
+          isShowList: false,
+        });
+      }
+    });
     this.renderOverlays(value);
   };
   /**
@@ -44,17 +61,20 @@ class Map extends React.Component {
    * @param { String } id
    */
   async renderOverlays(id) {
+    Toast.loading("Loading...", 0, null, false);
     const { data: res } = await axios.get("http://localhost:8080/area/map", {
       params: {
         id: id,
       },
     });
+    Toast.hide();
     const { type, nextZoom } = this.getTypeAndZoom();
     res.body.forEach((item) => {
       this.createOverlays(item, type, nextZoom);
     });
   }
   /**
+   * 渲染覆盖物
    * @param {Object} item
    * @param {String} type
    * @param {Number} nextZoom
@@ -68,12 +88,13 @@ class Map extends React.Component {
     } = item;
     var areaPoint = new BMap.Point(longitude, latitude);
     if (type === "rect") {
-      this.createRect(areaPoint, areaName, count, value, nextZoom);
+      this.createRect(areaPoint, areaName, count, value);
     } else {
       this.createCircle(areaPoint, areaName, count, value, nextZoom);
     }
   }
   /**
+   * 渲染圆形覆盖物
    * @param {Object} areaPoint 坐标
    * @param {String} areaName 区域名字
    * @param {Number} count 数量
@@ -103,25 +124,33 @@ class Map extends React.Component {
     this.map.addOverlay(labeL);
   }
   /**
+   * 渲染矩形覆盖物
    * @param {Object} areaPoint 坐标
    * @param {String} areaName 区域名字
    * @param {Number} count 数量
    * @param {String} value 区域id
    * @param {Number} nextZoom 缩放级别
    */
-   createRect(areaPoint, areaName, count, value, nextZoom) {
+  createRect(areaPoint, areaName, count, value) {
     let opts = {
       position: areaPoint, // 指定文本标注所在的地理位置
       offset: new BMap.Size(-50, -28), // 设置文本偏移量
     };
     // 创建文本标注对象
     let labeL = new BMap.Label("", opts);
-    labeL.setContent(`<div class="${styles.bubble}">
-      <p class="${styles.name}">${areaName}</p>
-      <p>${count}套</p>
-      </div>`);
-    labeL.addEventListener("click", () => {
-      
+    labeL.setContent(`<div class="${styles.recT}">
+    <span class="${styles.housename}">${areaName}</span>
+      <span class="${styles.housenum}">${count}套</span>
+      <i class="${styles.arrow}"></i>
+    </div>`);
+    labeL.addEventListener("click", (e) => {
+      console.log("小区被点击了");
+      this.getHousesList(value);
+      const target = e.changedTouches[0];
+      this.map.panBy(
+        window.innerWidth / 2 - target.clientX,
+        (window.innerHeight - 330) / 2 - target.clientY
+      );
     });
     labeL.setStyle(labelStyle);
     labeL.id = value;
@@ -146,11 +175,89 @@ class Map extends React.Component {
     }
     return { type, nextZoom };
   }
+  /**
+   * 获取小区房源数据
+   * @param {String} 区域id
+   * @returns
+   */
+  async getHousesList(id) {
+    try {
+      Toast.loading("Loading...", 0, null, false);
+      const { data: res } = await axios.get("http://localhost:8080/houses", {
+        params: {
+          cityId: id,
+        },
+      });
+      Toast.hide();
+      this.setState(() => {
+        return {
+          housesList: res.body.list,
+          isShowList: true,
+        };
+      });
+    } catch (e) {
+      Toast.hide();
+    }
+  }
+  /**
+   * 渲染小区房屋列表
+   */
+  renderHouseList = () => {
+    return this.state.housesList.map((item) => (
+      <div className={styles.house} key={item.houseCode}>
+        <div className={styles.imgWrap}>
+          <img
+            className={styles.img}
+            src={`http://localhost:8080${item.houseImg}`}
+            alt=""
+          />
+        </div>
+        <div className={styles.content}>
+          <h3 className={styles.title}>{item.title}</h3>
+          <div className={styles.desc}>{item.desc}</div>
+          <div>
+            {item.tags.map((tag, index) => {
+              let tagClass = `tag${index + 1}`;
+              return (
+                <span
+                  className={[styles.tag, styles[tagClass]].join(" ")}
+                  key={tag}
+                >
+                  {tag}
+                </span>
+              );
+            })}
+          </div>
+          <div className={styles.price}>
+            <span className={styles.priceNum}>{item.price}</span> 元/月
+          </div>
+        </div>
+      </div>
+    ));
+  };
   render() {
     return (
       <div className={styles.map}>
         <NavHeader>地图找房</NavHeader>
         <div id="container" className={styles.container}></div>
+        <div
+          className={[
+            styles.houseList,
+            this.state.isShowList ? styles.show : "",
+          ].join(" ")}
+        >
+          <div className={styles.titleWrap}>
+            <h1 className={styles.listTitle}>房屋列表</h1>
+            <Link className={styles.titleMore} to="/home/list">
+              更多房源
+            </Link>
+          </div>
+
+          <div className={styles.houseItems}>
+            {/* 房屋结构 */}
+            {this.renderHouseList()}
+          </div>
+        </div>
       </div>
     );
   }
