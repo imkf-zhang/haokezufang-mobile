@@ -1,4 +1,4 @@
-import axios from "axios";
+import API from "./api";
 /**
  * 获取当前所在城市名称
  * @returns {string} 当前所在城市
@@ -10,8 +10,8 @@ export const getCurrentCity = () => {
       const myCity = new window.BMap.LocalCity();
       myCity.get(async (res) => {
         try {
-          const { data: reslust } = await axios.get(
-            "http://localhost:8080/area/info",
+          const { data: reslust } = await API.get(
+            "/area/info",
             {
               params: {
                 name: res.name,

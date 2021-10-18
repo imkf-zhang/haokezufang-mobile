@@ -1,5 +1,5 @@
 import React from "react";
-import axios from "axios";
+import API from "../../utils/api";
 import { getCurrentCity } from "../../utils/index";
 import { NavBar, Toast } from "antd-mobile";
 import { AutoSizer, List } from "react-virtualized";
@@ -154,14 +154,14 @@ class CityList extends React.Component {
     }
   };
   async getCityList() {
-    const { data: res } = await axios.get("http://localhost:8080/area/city", {
+    const { data: res } = await API.get("http://localhost:8080/area/city", {
       params: {
         level: 1,
       },
     });
     const { cityList, cityIndex } = formatCityData(res.body);
     // 获取热门城市数据
-    const { data: hot } = await axios.get("http://localhost:8080/area/hot");
+    const { data: hot } = await API.get("http://localhost:8080/area/hot");
     cityList["hot"] = hot.body;
     cityIndex.unshift("hot");
     // 获取当前定位城市

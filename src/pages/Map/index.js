@@ -1,10 +1,11 @@
 import React from "react";
-import axios from "axios";
+// import axios from "axios";
 import { Link } from "react-router-dom";
 import NavHeader from "../../components/NavHeader";
 import styles from "./index.module.css";
 import { Toast } from "antd-mobile";
 import { BASE_URL } from "../../utils/url"
+import API from "../../utils/api";
 const BMap = window.BMap;
 const labelStyle = {
   cursor: "pointer",
@@ -63,7 +64,7 @@ class Map extends React.Component {
    */
   async renderOverlays(id) {
     Toast.loading("Loading...", 0, null, false);
-    const { data: res } = await axios.get("http://localhost:8080/area/map", {
+    const { data: res } = await API.get("/area/map", {
       params: {
         id: id,
       },
@@ -184,7 +185,7 @@ class Map extends React.Component {
   async getHousesList(id) {
     try {
       Toast.loading("Loading...", 0, null, false);
-      const { data: res } = await axios.get("http://localhost:8080/houses", {
+      const { data: res } = await API.get("/houses", {
         params: {
           cityId: id,
         },

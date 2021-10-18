@@ -1,6 +1,6 @@
 import React from "react";
 import { Carousel, Flex, Grid, WingBlank } from "antd-mobile";
-import axios from "axios";
+import API from "../../utils/api";
 import { getCurrentCity } from "../../utils/index"
 import "./index.css";
 import { BASE_URL } from "../../utils/url"
@@ -31,7 +31,7 @@ class Index extends React.Component {
     curCityName: ''
   };
   async getSwipers() {
-    const { data: res } = await axios.get("http://localhost:8080/home/swiper");
+    const { data: res } = await API.get("http://localhost:8080/home/swiper");
     this.setState(() => {
       return {
         swipers: res.body,
@@ -40,7 +40,7 @@ class Index extends React.Component {
     });
   }
   async getGroups() {
-    const { data: res } = await axios.get("http://localhost:8080/home/groups", {
+    const { data: res } = await API.get("http://localhost:8080/home/groups", {
       params: {
         area: "AREA|88cff55c-aaa4-e2e0",
       },
@@ -52,7 +52,7 @@ class Index extends React.Component {
     });
   }
   async getSwipers() {
-    const { data: res } = await axios.get("http://localhost:8080/home/swiper");
+    const { data: res } = await API.get("http://localhost:8080/home/swiper");
     this.setState(() => {
       return {
         swipers: res.body,
@@ -61,7 +61,7 @@ class Index extends React.Component {
     });
   }
   async getNews() {
-    const { data: res } = await axios.get("http://localhost:8080/home/news", {
+    const { data: res } = await API.get("http://localhost:8080/home/news", {
       params: {
         area: "AREA|88cff55c-aaa4-e2e0",
       },
