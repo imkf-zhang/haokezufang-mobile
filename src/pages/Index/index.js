@@ -3,6 +3,7 @@ import { Carousel, Flex, Grid, WingBlank } from "antd-mobile";
 import axios from "axios";
 import { getCurrentCity } from "../../utils/index"
 import "./index.css";
+import { BASE_URL } from "../../utils/url"
 import Nav1 from "../../assets/images/nav-1.png";
 import Nav2 from "../../assets/images/nav-2.png";
 import Nav3 from "../../assets/images/nav-3.png";
@@ -83,7 +84,7 @@ class Index extends React.Component {
         }}
       >
         <img
-          src={`http://localhost:8080${item.imgSrc}`}
+          src={`${BASE_URL}${item.imgSrc}`}
           alt=""
           style={{ width: "100%", verticalAlign: "top" }}
         />
@@ -107,7 +108,7 @@ class Index extends React.Component {
     return this.state.news.map((item) => (
       <div className="news-item" key={item.id}>
         <div className="imgwrap">
-          <img className="img" src={`http://localhost:8080${item.imgSrc}`} />
+          <img className="img" src={BASE_URL+item.imgSrc} />
         </div>
         <Flex className="content" direction="column" justify="between">
           <h3 className="title">{item.title}</h3>
@@ -189,7 +190,7 @@ class Index extends React.Component {
                   <p className="title">{item.title}</p>
                   <span className="info">{item.desc}</span>
                 </div>
-                <img src={`http://localhost:8080${item.imgSrc}`} alt="" />
+                <img src={ BASE_URL+item.imgSrc} alt="" />
               </Flex>
             )}
           />

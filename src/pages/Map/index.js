@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import NavHeader from "../../components/NavHeader";
 import styles from "./index.module.css";
 import { Toast } from "antd-mobile";
+import { BASE_URL } from "../../utils/url"
 const BMap = window.BMap;
 const labelStyle = {
   cursor: "pointer",
@@ -208,7 +209,7 @@ class Map extends React.Component {
         <div className={styles.imgWrap}>
           <img
             className={styles.img}
-            src={`http://localhost:8080${item.houseImg}`}
+            src={`${BASE_URL}${item.houseImg}`}
             alt=""
           />
         </div>
