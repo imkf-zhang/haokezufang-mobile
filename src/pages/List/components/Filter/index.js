@@ -58,7 +58,8 @@ export default class Filter extends Component {
       };
     });
   };
-  onSave = () => {
+  onSave = (type,value) => {
+    console.log(type,value)
     this.setState(() => {
       return {
         openType: "",
@@ -91,7 +92,7 @@ export default class Filter extends Component {
         break;
     }
     return (
-      <FilterPicker onCancel={this.onCancel} onSave={this.onSave} data={data} cols={cols} />
+      <FilterPicker type={openType} onCancel={this.onCancel} onSave={this.onSave} data={data} cols={cols} />
     );
   };
   render() {
