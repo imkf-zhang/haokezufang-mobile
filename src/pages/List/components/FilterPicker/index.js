@@ -91,7 +91,7 @@ const province = [
 export default class FilterPicker extends Component {
  constructor(props) {
   super(props)
-  console.log('picker创建了')
+  // console.log('picker创建了')
   this.state = {
     value: this.props.defaultValue,
   };

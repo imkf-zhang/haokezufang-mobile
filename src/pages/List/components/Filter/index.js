@@ -12,10 +12,10 @@ const titleSelectedStatus = {
 };
 // 默认选中值  其实规定的默认值也不是瞎规定的，是有根据的
 const selectedValue = {
-  area: ['area',null],
-  mode: ['null'],
-  price: ['null'],
-  more: []
+  area: ["area", null],
+  mode: ["null"],
+  price: ["null"],
+  more: [],
 };
 const { value } = JSON.parse(localStorage.getItem("hkzf_city"));
 export default class Filter extends Component {
@@ -26,7 +26,7 @@ export default class Filter extends Component {
     // 所有筛选条件数据
     filterData: {},
     // 筛选条件的选中值
-    selectedValue
+    selectedValue,
   };
   componentDidMount() {
     this.getFiltersDate();
@@ -48,13 +48,32 @@ export default class Filter extends Component {
     console.log(body);
   };
   onTitleClick = (type) => {
-    console.log(this, type);
-    this.setState((prevState) => {
+    // console.log(this, type);
+    const { titleSelectedStatus, selectedValue } = this.state;
+    const newTitleSelectedStatus = { ...titleSelectedStatus }
+    Object.keys(titleSelectedStatus).forEach( item => {
+      if (type === item) {
+        newTitleSelectedStatus[type] = true
+        return
+      }
+      const selectedVal = selectedValue[item]
+      if(item === 'area' && (selectedVal.length !== 2 || selectedVal[0] !== 'area' )) {
+        // 高亮
+        newTitleSelectedStatus[item] = true
+      } else if (item === 'mode' && selectedVal[0] !== 'null') {
+        newTitleSelectedStatus[item] = true
+      } else if (item === 'price' && selectedVal[0] !== 'null') {
+        newTitleSelectedStatus[item] = true
+      }else if (item === 'more' ) {
+        // FIXME: 选择更多的时候
+      }else {
+        newTitleSelectedStatus[item] = false
+      }
+    })
+    console.log(newTitleSelectedStatus)
+    this.setState(() => {
       return {
-        titleSelectedStatus: {
-          ...prevState.titleSelectedStatus,
-          [type]: true,
-        },
+        titleSelectedStatus: newTitleSelectedStatus,
         openType: type,
       };
     });
@@ -66,15 +85,15 @@ export default class Filter extends Component {
       };
     });
   };
-  onSave = (type,value) => {
+  onSave = (type, value) => {
     this.setState(() => {
       return {
         openType: "",
         selectedValue: {
           ...this.state.selectedValue,
           // 只更新当前type对应的值
-          [type]: value
-        }
+          [type]: value,
+        },
       };
     });
   };
@@ -82,9 +101,11 @@ export default class Filter extends Component {
     const {
       openType,
       filterData: { area, subway, rentType, price },
-      selectedValue
+      selectedValue,
     } = this.state;
-    let data = [], cols =3, defaultValue =selectedValue[openType] ;
+    let data = [],
+      cols = 3,
+      defaultValue = selectedValue[openType];
     if (openType !== "area" && openType !== "mode" && openType !== "price") {
       return null;
     }
@@ -105,14 +126,15 @@ export default class Filter extends Component {
         break;
     }
     return (
-      <FilterPicker 
-      key={openType}
-      type={openType} 
-      onCancel={this.onCancel} 
-      onSave={this.onSave} 
-      data={data} 
-      cols={cols}
-      defaultValue={defaultValue} />
+      <FilterPicker
+        key={openType}
+        type={openType}
+        onCancel={this.onCancel}
+        onSave={this.onSave}
+        data={data}
+        cols={cols}
+        defaultValue={defaultValue}
+      />
     );
   };
   render() {
