@@ -104,7 +104,8 @@ export default class FilterPicker extends Component {
         {/* 选择器组件： */}
         <PickerView onChange={this.onChange} data={data} value={this.state.value} cols={cols} value={this.state.value} />
 
-        {/* 底部按钮 */}
+        {/* 底部按钮 */} 
+        {/* 传递改变后的值可以理解，为什么要传递type？ 因为FilterPicker是前三个选项复用的 */}
         <FilterFooter onCancel={ () => onCancel()}  onOk= {() => onSave(type,this.state.value) }/>
       </>
     )
