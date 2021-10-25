@@ -10,6 +10,13 @@ const titleSelectedStatus = {
   price: false,
   more: false,
 };
+// 默认选中值  其实规定的默认值也不是瞎规定的，是有根据的
+const selectedValue = {
+  area: ['area',null],
+  mode: ['null'],
+  price: ['null'],
+  more: []
+};
 const { value } = JSON.parse(localStorage.getItem("hkzf_city"));
 export default class Filter extends Component {
   state = {
@@ -18,7 +25,8 @@ export default class Filter extends Component {
     openType: "",
     // 所有筛选条件数据
     filterData: {},
-    zhang: "111",
+    // 筛选条件的选中值
+    selectedValue
   };
   componentDidMount() {
     this.getFiltersDate();
@@ -63,6 +71,10 @@ export default class Filter extends Component {
     this.setState(() => {
       return {
         openType: "",
+        selectedValue: {
+          ...this.state.selectedValue,
+          [type]: value
+        }
       };
     });
   };
@@ -70,8 +82,9 @@ export default class Filter extends Component {
     const {
       openType,
       filterData: { area, subway, rentType, price },
+      selectedValue
     } = this.state;
-    let data = [], cols =3;
+    let data = [], cols =3, defaultValue =selectedValue[openType] ;
     if (openType !== "area" && openType !== "mode" && openType !== "price") {
       return null;
     }
@@ -92,7 +105,13 @@ export default class Filter extends Component {
         break;
     }
     return (
-      <FilterPicker type={openType} onCancel={this.onCancel} onSave={this.onSave} data={data} cols={cols} />
+      <FilterPicker 
+      type={openType} 
+      onCancel={this.onCancel} 
+      onSave={this.onSave} 
+      data={data} 
+      cols={cols}
+      defaultValue={defaultValue} />
     );
   };
   render() {
