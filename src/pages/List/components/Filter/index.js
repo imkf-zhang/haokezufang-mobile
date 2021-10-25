@@ -67,12 +67,12 @@ export default class Filter extends Component {
     });
   };
   onSave = (type,value) => {
-    console.log(type,value)
     this.setState(() => {
       return {
         openType: "",
         selectedValue: {
           ...this.state.selectedValue,
+          // 只更新当前type对应的值
           [type]: value
         }
       };
@@ -106,6 +106,7 @@ export default class Filter extends Component {
     }
     return (
       <FilterPicker 
+      key={openType}
       type={openType} 
       onCancel={this.onCancel} 
       onSave={this.onSave} 

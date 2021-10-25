@@ -89,14 +89,20 @@ const province = [
 ]
 
 export default class FilterPicker extends Component {
-  state = {
+ constructor(props) {
+  super(props)
+  console.log('picker创建了')
+  this.state = {
     value: this.props.defaultValue,
   };
+ }
   onChange = (value) => {
     this.setState({
       value,
     });
   }
+  // 存在一个bug，只有当PickerView重建了，默认值才生效。
+  // 没有重建只是来回的切换，默认值就不生效，不会执行state初始化，自然就拿不到最新的值
   render() {
     const { onCancel, onSave, data, cols,type } = this.props;
     return (
