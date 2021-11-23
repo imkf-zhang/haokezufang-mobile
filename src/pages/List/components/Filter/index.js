@@ -50,27 +50,30 @@ export default class Filter extends Component {
   onTitleClick = (type) => {
     // console.log(this, type);
     const { titleSelectedStatus, selectedValue } = this.state;
-    const newTitleSelectedStatus = { ...titleSelectedStatus }
-    Object.keys(titleSelectedStatus).forEach( item => {
+    const newTitleSelectedStatus = { ...titleSelectedStatus };
+    Object.keys(titleSelectedStatus).forEach((item) => {
       if (type === item) {
-        newTitleSelectedStatus[type] = true
-        return
+        newTitleSelectedStatus[type] = true;
+        return;
       }
-      const selectedVal = selectedValue[item]
-      if(item === 'area' && (selectedVal.length !== 2 || selectedVal[0] !== 'area' )) {
+      const selectedVal = selectedValue[item];
+      if (
+        item === "area" &&
+        (selectedVal.length !== 2 || selectedVal[0] !== "area")
+      ) {
         // 高亮
-        newTitleSelectedStatus[item] = true
-      } else if (item === 'mode' && selectedVal[0] !== 'null') {
-        newTitleSelectedStatus[item] = true
-      } else if (item === 'price' && selectedVal[0] !== 'null') {
-        newTitleSelectedStatus[item] = true
-      }else if (item === 'more' ) {
+        newTitleSelectedStatus[item] = true;
+      } else if (item === "mode" && selectedVal[0] !== "null") {
+        newTitleSelectedStatus[item] = true;
+      } else if (item === "price" && selectedVal[0] !== "null") {
+        newTitleSelectedStatus[item] = true;
+      } else if (item === "more") {
         // FIXME: 选择更多的时候
-      }else {
-        newTitleSelectedStatus[item] = false
+      } else {
+        newTitleSelectedStatus[item] = false;
       }
-    })
-    console.log(newTitleSelectedStatus)
+    });
+    console.log(newTitleSelectedStatus);
     this.setState(() => {
       return {
         titleSelectedStatus: newTitleSelectedStatus,
@@ -86,6 +89,7 @@ export default class Filter extends Component {
     });
   };
   onSave = (type, value) => {
+    console.log(type,value)
     this.setState(() => {
       return {
         openType: "",
@@ -137,6 +141,26 @@ export default class Filter extends Component {
       />
     );
   };
+  /**
+   * 渲染 FilterMore组件
+   * @returns components
+   */
+  renderFilterMore = () => {
+    const {
+      openType,
+      filterData: { roomType, oriented, floor, characteristic },
+    } = this.state;
+    const data = {
+      roomType,
+      oriented,
+      floor,
+      characteristic,
+    };
+    if (openType !== "more") {
+      return null;
+    }
+    return <FilterMore data={data} type={openType} onSave={this.onSave} />;
+  };
   render() {
     const { titleSelectedStatus, openType } = this.state;
     return (
@@ -155,7 +179,7 @@ export default class Filter extends Component {
           {/* 前三个菜单对应的内容： */}
           {this.renderFilterPicker()}
           {/* 最后一个菜单对应的内容： */}
-          {/* <FilterMore /> */}
+          {this.renderFilterMore()}
         </div>
       </div>
     );
