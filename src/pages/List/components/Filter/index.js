@@ -67,8 +67,8 @@ export default class Filter extends Component {
         newTitleSelectedStatus[item] = true;
       } else if (item === "price" && selectedVal[0] !== "null") {
         newTitleSelectedStatus[item] = true;
-      } else if (item === "more") {
-        // FIXME: 选择更多的时候
+      } else if (item === "more" && selectedVal.length !== 0) {
+        newTitleSelectedStatus[item] = true;
       } else {
         newTitleSelectedStatus[item] = false;
       }
@@ -84,23 +84,61 @@ export default class Filter extends Component {
   /**
    * 关闭弹出框
    */
-  onCancel = () => {
+  onCancel = (type) => {
+    const { titleSelectedStatus,selectedValue} = this.state;
+    const newTitleSelectedStatus = { ...titleSelectedStatus };
+    const selectedVal = selectedValue[type];
+    if (
+      type === "area" &&
+      (selectedVal.length !== 2 || selectedVal[0] !== "area")
+    ) {
+      // 高亮
+      newTitleSelectedStatus[type] = true;
+    } else if (type === "mode" && selectedVal[0] !== "null") {
+      newTitleSelectedStatus[type] = true;
+    } else if (type === "price" && selectedVal[0] !== "null") {
+      newTitleSelectedStatus[type] = true;
+    } else if (type === "more" && selectedVal.length !== 0) {
+      newTitleSelectedStatus[type] = true;
+    } else {
+      newTitleSelectedStatus[type] = false;
+    }
     this.setState(() => {
       return {
         openType: "",
+        titleSelectedStatus: newTitleSelectedStatus,
       };
     });
   };
   /**
-   * 获取到选中的值
+   * 获取到选中的值,判断当前菜单是否高亮（当选中无效值的时候，肯定不让其高亮）
    * @param {*} type 
    * @param {*} value 
    */
   onSave = (type, value) => {
-    console.log(type,value)
+    console.log(type,value);
+    const { titleSelectedStatus} = this.state;
+    const newTitleSelectedStatus = { ...titleSelectedStatus };
+    const selectedVal = value;
+    if (
+      type === "area" &&
+      (selectedVal.length !== 2 || selectedVal[0] !== "area")
+    ) {
+      // 高亮
+      newTitleSelectedStatus[type] = true;
+    } else if (type === "mode" && selectedVal[0] !== "null") {
+      newTitleSelectedStatus[type] = true;
+    } else if (type === "price" && selectedVal[0] !== "null") {
+      newTitleSelectedStatus[type] = true;
+    } else if (type === "more" && selectedVal.length !== 0) {
+      newTitleSelectedStatus[type] = true;
+    } else {
+      newTitleSelectedStatus[type] = false;
+    }
     this.setState(() => {
       return {
         openType: "",
+        titleSelectedStatus: newTitleSelectedStatus,
         selectedValue: {
           ...this.state.selectedValue,
           // 只更新当前type对应的值
@@ -186,7 +224,7 @@ export default class Filter extends Component {
       <div className={styles.root}>
         {/* 前三个菜单的遮罩层 */}
         {openType == "area" || openType == "mode" || openType == "price" ? (
-          <div className={styles.mask} onClick={this.onCancel} />
+          <div className={styles.mask} onClick={()=> {this.onCancel(openType)}} />
         ) : null}
         <div className={styles.content}>
           {/* 标题栏 */}
