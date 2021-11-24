@@ -81,6 +81,9 @@ export default class Filter extends Component {
       };
     });
   };
+  /**
+   * 关闭弹出框
+   */
   onCancel = () => {
     this.setState(() => {
       return {
@@ -88,6 +91,11 @@ export default class Filter extends Component {
       };
     });
   };
+  /**
+   * 获取到选中的值
+   * @param {*} type 
+   * @param {*} value 
+   */
   onSave = (type, value) => {
     console.log(type,value)
     this.setState(() => {
@@ -101,6 +109,10 @@ export default class Filter extends Component {
       };
     });
   };
+  /**
+   * 渲染前三个Picker组件
+   * @returns 
+   */
   renderFilterPicker = () => {
     const {
       openType,
@@ -148,6 +160,7 @@ export default class Filter extends Component {
   renderFilterMore = () => {
     const {
       openType,
+      selectedValue,
       filterData: { roomType, oriented, floor, characteristic },
     } = this.state;
     const data = {
@@ -156,10 +169,16 @@ export default class Filter extends Component {
       floor,
       characteristic,
     };
+    const defaultValue = selectedValue.more;
     if (openType !== "more") {
       return null;
     }
-    return <FilterMore data={data} type={openType} onSave={this.onSave} />;
+    return <FilterMore 
+    data={data} 
+    type={openType}
+    onCancel={this.onCancel}
+    onSave={this.onSave}
+    defaultValue={defaultValue} />;
   };
   render() {
     const { titleSelectedStatus, openType } = this.state;
