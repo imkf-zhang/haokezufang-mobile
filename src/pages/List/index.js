@@ -4,7 +4,7 @@ import SearchHeader from "../../components/SearchHeader";
 import Filter from "./components/Filter/index";
 import styles from "../List/index.module.css";
 import API from "../../utils/api"
-import { AutoSizer, List } from "react-virtualized";
+import { AutoSizer, List, WindowScroller } from "react-virtualized";
 import HouseItem from "../../components/HouseItem";
 import { BASE_URL } from "../../utils/url"
 
@@ -89,13 +89,27 @@ class News extends React.Component {
         </Flex>
         <Filter onFilter={this.onFilter}></Filter>
         <div className={styles.houseItems}>
-        <List
-              width={300}
-              height={300}
-              rowCount={this.state.count}
-              rowHeight={120}
-              rowRenderer={this.renderHouseList}
-            />
+          {/* list自身有滚动条这个并不是想要的，想要其跟随页面滚动 */}
+            <WindowScroller>
+              {
+                ({height,isScrolling,scrollTop}) => (
+                  <AutoSizer>
+                    {
+                      ({width}) => (
+                        <List
+                        autoHeight
+                        width={width}
+                        height={height}
+                        rowCount={this.state.count}
+                        rowHeight={120}
+                        rowRenderer={this.renderHouseList}
+                       />
+                      )
+                    }
+                  </AutoSizer>
+                )
+              }
+            </WindowScroller>
         </div>
       </div>
     );
