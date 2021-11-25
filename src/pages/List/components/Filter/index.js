@@ -135,6 +135,30 @@ export default class Filter extends Component {
     } else {
       newTitleSelectedStatus[type] = false;
     }
+    const newSelectedValue =  {
+      ...this.state.selectedValue,
+      // 只更新当前type对应的值
+      [type]: value,
+    };
+    console.log("最新的选中值",newSelectedValue);
+    const { area,mode,price,more } = newSelectedValue;
+    // 筛选条件数据
+    const filters = {};
+    // 区域
+    const areaKey = area[0];
+    let areaValue = 'null';
+    if (area.length == 3) {
+      areaValue = area[2] !== 'null' ? area[2]:area[1]
+    }
+    filters[areaKey] = areaValue;
+    // 方式和租金
+    filters.mode = mode[0];
+    filters.price = price[0];
+    // 更多筛选项
+    filters.more = more.join(",");
+    // 把值传递给父组件
+    this.props.onFilter(filters);
+    // console.log(filters)
     this.setState(() => {
       return {
         openType: "",
