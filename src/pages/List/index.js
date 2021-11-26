@@ -33,6 +33,7 @@ class News extends React.Component {
    * @param { Object}
    */
   onFilter = (filters) => {
+    window.scrollTo(0,0)
     this.filters = filters;
     this.searchHouseList();
   };

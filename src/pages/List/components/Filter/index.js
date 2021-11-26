@@ -29,6 +29,7 @@ export default class Filter extends Component {
     selectedValue,
   };
   componentDidMount() {
+    this.htmlBody = document.body
     this.getFiltersDate();
   }
   // 封装获取所有筛选条件的数据
@@ -48,6 +49,7 @@ export default class Filter extends Component {
     console.log(body);
   };
   onTitleClick = (type) => {
+    this.htmlBody.classList.add('body-fixed')
     // console.log(this, type);
     const { titleSelectedStatus, selectedValue } = this.state;
     const newTitleSelectedStatus = { ...titleSelectedStatus };
@@ -85,6 +87,7 @@ export default class Filter extends Component {
    * 关闭弹出框
    */
   onCancel = (type) => {
+    this.htmlBody.classList.remove('body-fixed')
     const { titleSelectedStatus,selectedValue} = this.state;
     const newTitleSelectedStatus = { ...titleSelectedStatus };
     const selectedVal = selectedValue[type];
@@ -116,6 +119,7 @@ export default class Filter extends Component {
    * @param {*} value 
    */
   onSave = (type, value) => {
+    this.htmlBody.classList.remove('body-fixed')
     console.log(type,value);
     const { titleSelectedStatus} = this.state;
     const newTitleSelectedStatus = { ...titleSelectedStatus };

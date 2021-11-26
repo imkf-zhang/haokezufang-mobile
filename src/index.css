@@ -26,3 +26,7 @@ ul {
 ul {
   list-style: none;
 }
+/* 解决找房页面，筛选条件弹出，页面还是会 滚动的bug */
+.body-fixed {
+  overflow: hidden;
+}
