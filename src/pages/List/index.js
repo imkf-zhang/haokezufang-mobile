@@ -139,7 +139,7 @@ class News extends React.Component {
             className={styles.seachHeader}
           ></SearchHeader>
         </Flex>
-        <Sticky>
+        <Sticky height={40}>
           <Filter onFilter={this.onFilter}></Filter>
         </Sticky>
         <div className={styles.houseItems}>
