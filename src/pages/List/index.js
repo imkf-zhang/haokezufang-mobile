@@ -1,8 +1,10 @@
 import React from "react";
 import { Flex } from "antd-mobile";
 import SearchHeader from "../../components/SearchHeader";
+import NoHouse from "../../components/NoHouse"
 import Filter from "./components/Filter/index";
 import styles from "../List/index.module.css";
+import { Toast } from "antd-mobile";
 import API from "../../utils/api";
 import {
   AutoSizer,
@@ -20,6 +22,7 @@ class News extends React.Component {
   state = {
     list: [],
     count: 0,
+    isLoading: false
   };
   filters = {};
   componentDidMount() {
@@ -38,8 +41,10 @@ class News extends React.Component {
    * @returns
    */
   searchHouseList = async () => {
-    // 获取城市id
-    const { value } = JSON.parse(localStorage.getItem("hkzf_city"));
+    this.setState(() => {
+      return {isLoading: true}
+    })
+    Toast.loading("加载中...",0,null,false)
     const {
       data: {
         body: { list, count },
@@ -52,10 +57,15 @@ class News extends React.Component {
         end: 20,
       },
     });
+    Toast.hide()
+    if(count !== 0) {
+      Toast.info(`共找到${count}套房源`,2,null,false)
+    }
     this.setState(() => {
       return {
         list,
         count,
+        isLoading: false
       };
     });
     console.log("获取房屋筛选数据", list, count);
@@ -124,27 +134,18 @@ class News extends React.Component {
       });
     });
   };
-  render() {
+  /**
+   * 渲染房屋列表
+   * @returns 
+   */
+  renderList = () => {
+    const { count } = this.state;
+    // 并不是一进来页面就进行一个count的判断，而是数据加载完毕之后再进行count的判断
+    if(count===0 && !this.state.isLoading) {
+      return (<NoHouse>没有找到房源,请您换个搜索条件吧~</NoHouse>)
+    }
     return (
-      <div className={styles.root}>
-        <Flex className={styles.header}>
-          <i
-            className="iconfont"
-            onClick={() => {
-              this.props.history.go(-1);
-            }}
-          ></i>
-          <SearchHeader
-            curCityName={label}
-            className={styles.seachHeader}
-          ></SearchHeader>
-        </Flex>
-        <Sticky height={40}>
-          <Filter onFilter={this.onFilter}></Filter>
-        </Sticky>
-        <div className={styles.houseItems}>
-          {/* list自身有滚动条这个并不是想要的，想要其跟随页面滚动 */}
-          <InfiniteLoader
+      <InfiniteLoader
             isRowLoaded={this.isRowLoaded}
             loadMoreRows={this.loadMoreRows}
             rowCount={this.state.count}
@@ -172,6 +173,29 @@ class News extends React.Component {
               </WindowScroller>
             )}
           </InfiniteLoader>
+    )
+  }
+  render() {
+    return (
+      <div className={styles.root}>
+        <Flex className={styles.header}>
+          <i
+            className="iconfont"
+            onClick={() => {
+              this.props.history.go(-1);
+            }}
+          ></i>
+          <SearchHeader
+            curCityName={label}
+            className={styles.seachHeader}
+          ></SearchHeader>
+        </Flex>
+        <Sticky height={40}>
+          <Filter onFilter={this.onFilter}></Filter>
+        </Sticky>
+        <div className={styles.houseItems}>
+          {/* list自身有滚动条这个并不是想要的，想要其跟随页面滚动 */}
+          {this.renderList()}
         </div>
       </div>
     );
