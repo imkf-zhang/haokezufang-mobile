@@ -13,7 +13,7 @@ import {
 import HouseItem from "../../components/HouseItem";
 import { BASE_URL } from "../../utils/url";
 
-const { label } = JSON.parse(localStorage.getItem("hkzf_city"));
+const { label,value } = JSON.parse(localStorage.getItem("hkzf_city"));
 
 class News extends React.Component {
   state = {
@@ -69,8 +69,15 @@ class News extends React.Component {
     style, // 重点属性，一定要给每一行数据添加样式，作用，指定每一行位置。
   }) => {
     const { list } = this.state;
-    const house = list[index];
-    console.log(house);
+    const house = list[index];// 滚动的时候index可能会超出list的长度，所以house会出现undefind
+    console.log(house); 
+    if (!house) {
+      return (
+        <div key={key} style={style}>
+          <p className={styles.loading}></p>
+        </div>
+      )
+    }
     return (
       <HouseItem
         key={key}
@@ -97,9 +104,23 @@ class News extends React.Component {
    * @returns { Promise } 在数据完成加载时调用resolve
    */
   loadMoreRows = ({ startIndex, stopIndex }) => {
-    console.log(startIndex, stopIndex)
+    console.log(startIndex, stopIndex);
     return new Promise( resolve => {
       //数据加载完成时调用resolve这个方法即可 
+      API.get("/houses", {
+        params: {
+          cityId: value,
+          ...this.filters,
+          start: startIndex,
+          end: stopIndex,
+        },
+      }).then( res=> {
+        console.log("res",res)
+         this.setState(() =>{
+           return { list: [...this.state.list, ...res.data.body.list]}
+         })
+         resolve()
+      } )
     })
   };
   render() {
@@ -124,7 +145,6 @@ class News extends React.Component {
             isRowLoaded={this.isRowLoaded}
             loadMoreRows={this.loadMoreRows}
             rowCount={this.state.count}
-            minimumBatchSize={20}
           >
             {({ onRowsRendered, registerChild }) => (
               <WindowScroller>
@@ -132,14 +152,16 @@ class News extends React.Component {
                   <AutoSizer>
                     {({ width }) => (
                       <List
+                        autoHeight
                         onRowsRendered={onRowsRendered}
                         ref={registerChild}
-                        autoHeight
                         width={width}
                         height={height}
                         rowCount={this.state.count}
                         rowHeight={120}
                         rowRenderer={this.renderHouseList}
+                        isScrolling={isScrolling}
+                        scrollTop={scrollTop}
                       />
                     )}
                   </AutoSizer>
