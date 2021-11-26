@@ -11,9 +11,10 @@ import {
   InfiniteLoader,
 } from "react-virtualized";
 import HouseItem from "../../components/HouseItem";
+import Sticky from "../../components/Sticky";
 import { BASE_URL } from "../../utils/url";
 
-const { label,value } = JSON.parse(localStorage.getItem("hkzf_city"));
+const { label, value } = JSON.parse(localStorage.getItem("hkzf_city"));
 
 class News extends React.Component {
   state = {
@@ -69,14 +70,14 @@ class News extends React.Component {
     style, // 重点属性，一定要给每一行数据添加样式，作用，指定每一行位置。
   }) => {
     const { list } = this.state;
-    const house = list[index];// 滚动的时候index可能会超出list的长度，所以house会出现undefind
-    console.log(house); 
+    const house = list[index]; // 滚动的时候index可能会超出list的长度，所以house会出现undefind
+    console.log(house);
     if (!house) {
       return (
         <div key={key} style={style}>
           <p className={styles.loading}></p>
         </div>
-      )
+      );
     }
     return (
       <HouseItem
@@ -105,8 +106,8 @@ class News extends React.Component {
    */
   loadMoreRows = ({ startIndex, stopIndex }) => {
     console.log(startIndex, stopIndex);
-    return new Promise( resolve => {
-      //数据加载完成时调用resolve这个方法即可 
+    return new Promise((resolve) => {
+      //数据加载完成时调用resolve这个方法即可
       API.get("/houses", {
         params: {
           cityId: value,
@@ -114,14 +115,14 @@ class News extends React.Component {
           start: startIndex,
           end: stopIndex,
         },
-      }).then( res=> {
-        console.log("res",res)
-         this.setState(() =>{
-           return { list: [...this.state.list, ...res.data.body.list]}
-         })
-         resolve()
-      } )
-    })
+      }).then((res) => {
+        console.log("res", res);
+        this.setState(() => {
+          return { list: [...this.state.list, ...res.data.body.list] };
+        });
+        resolve();
+      });
+    });
   };
   render() {
     return (
@@ -138,7 +139,9 @@ class News extends React.Component {
             className={styles.seachHeader}
           ></SearchHeader>
         </Flex>
-        <Filter onFilter={this.onFilter}></Filter>
+        <Sticky>
+          <Filter onFilter={this.onFilter}></Filter>
+        </Sticky>
         <div className={styles.houseItems}>
           {/* list自身有滚动条这个并不是想要的，想要其跟随页面滚动 */}
           <InfiniteLoader
