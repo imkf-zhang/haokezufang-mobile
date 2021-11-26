@@ -6,6 +6,7 @@ import Filter from "./components/Filter/index";
 import styles from "../List/index.module.css";
 import { Toast } from "antd-mobile";
 import API from "../../utils/api";
+import { getCurrentCity } from "../../utils";
 import {
   AutoSizer,
   List,
@@ -16,7 +17,6 @@ import HouseItem from "../../components/HouseItem";
 import Sticky from "../../components/Sticky";
 import { BASE_URL } from "../../utils/url";
 
-const { label, value } = JSON.parse(localStorage.getItem("hkzf_city"));
 
 class News extends React.Component {
   state = {
@@ -24,8 +24,13 @@ class News extends React.Component {
     count: 0,
     isLoading: false
   };
+  label = "";
+  value = "";
   filters = {};
-  componentDidMount() {
+  async componentDidMount() {
+    const { label,value} =  await getCurrentCity();
+    this.label = label;
+    this.value = value;
     this.searchHouseList();
   }
   /**
@@ -52,7 +57,7 @@ class News extends React.Component {
       },
     } = await API.get("/houses", {
       params: {
-        cityId: value,
+        cityId: this.value,
         ...this.filters,
         start: 1,
         end: 20,
@@ -121,7 +126,7 @@ class News extends React.Component {
       //数据加载完成时调用resolve这个方法即可
       API.get("/houses", {
         params: {
-          cityId: value,
+          cityId: this.value,
           ...this.filters,
           start: startIndex,
           end: stopIndex,
@@ -187,7 +192,7 @@ class News extends React.Component {
             }}
           ></i>
           <SearchHeader
-            curCityName={label}
+            curCityName={this.label}
             className={styles.seachHeader}
           ></SearchHeader>
         </Flex>
