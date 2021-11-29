@@ -97,6 +97,9 @@ class News extends React.Component {
     }
     return (
       <HouseItem
+        onClick={ () => {
+          this.props.history.push(`/detail/${house.houseCode}`)
+        }}
         key={key}
         style={style}
         src={BASE_URL + house.houseImg}
