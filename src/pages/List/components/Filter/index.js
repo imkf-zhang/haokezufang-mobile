@@ -1,8 +1,9 @@
 import React, { Component } from "react";
+import { Spring, animated } from "react-spring";
 import FilterTitle from "../FilterTitle";
 import FilterPicker from "../FilterPicker";
 import FilterMore from "../FilterMore";
-import styles from "./index.module.css";
+import { default as styles1 } from "./index.module.css"; // 跟动画的react-spring的styles冲突了,因此命名为styles1
 import API from "../../../../utils/api";
 const titleSelectedStatus = {
   area: false,
@@ -29,7 +30,7 @@ export default class Filter extends Component {
     selectedValue,
   };
   componentDidMount() {
-    this.htmlBody = document.body
+    this.htmlBody = document.body;
     this.getFiltersDate();
   }
   // 封装获取所有筛选条件的数据
@@ -46,10 +47,9 @@ export default class Filter extends Component {
         filterData: body,
       };
     });
-    console.log(body);
   };
   onTitleClick = (type) => {
-    this.htmlBody.classList.add('body-fixed')
+    this.htmlBody.classList.add("body-fixed");
     // console.log(this, type);
     const { titleSelectedStatus, selectedValue } = this.state;
     const newTitleSelectedStatus = { ...titleSelectedStatus };
@@ -87,8 +87,8 @@ export default class Filter extends Component {
    * 关闭弹出框
    */
   onCancel = (type) => {
-    this.htmlBody.classList.remove('body-fixed')
-    const { titleSelectedStatus,selectedValue} = this.state;
+    this.htmlBody.classList.remove("body-fixed");
+    const { titleSelectedStatus, selectedValue } = this.state;
     const newTitleSelectedStatus = { ...titleSelectedStatus };
     const selectedVal = selectedValue[type];
     if (
@@ -115,13 +115,13 @@ export default class Filter extends Component {
   };
   /**
    * 获取到选中的值,判断当前菜单是否高亮（当选中无效值的时候，肯定不让其高亮）
-   * @param {*} type 
-   * @param {*} value 
+   * @param {*} type
+   * @param {*} value
    */
   onSave = (type, value) => {
-    this.htmlBody.classList.remove('body-fixed')
-    console.log(type,value);
-    const { titleSelectedStatus} = this.state;
+    this.htmlBody.classList.remove("body-fixed");
+    console.log(type, value);
+    const { titleSelectedStatus } = this.state;
     const newTitleSelectedStatus = { ...titleSelectedStatus };
     const selectedVal = value;
     if (
@@ -139,20 +139,19 @@ export default class Filter extends Component {
     } else {
       newTitleSelectedStatus[type] = false;
     }
-    const newSelectedValue =  {
+    const newSelectedValue = {
       ...this.state.selectedValue,
       // 只更新当前type对应的值
       [type]: value,
     };
-    console.log("最新的选中值",newSelectedValue);
-    const { area,mode,price,more } = newSelectedValue;
+    const { area, mode, price, more } = newSelectedValue;
     // 筛选条件数据
     const filters = {};
     // 区域
     const areaKey = area[0];
-    let areaValue = 'null';
+    let areaValue = "null";
     if (area.length == 3) {
-      areaValue = area[2] !== 'null' ? area[2]:area[1]
+      areaValue = area[2] !== "null" ? area[2] : area[1];
     }
     filters[areaKey] = areaValue;
     // 方式和租金
@@ -177,7 +176,7 @@ export default class Filter extends Component {
   };
   /**
    * 渲染前三个Picker组件
-   * @returns 
+   * @returns
    */
   renderFilterPicker = () => {
     const {
@@ -239,28 +238,80 @@ export default class Filter extends Component {
     if (openType !== "more") {
       return null;
     }
-    return <FilterMore 
-    data={data} 
-    type={openType}
-    onCancel={this.onCancel}
-    onSave={this.onSave}
-    defaultValue={defaultValue} />;
+    return (
+      <FilterMore
+        data={data}
+        type={openType}
+        onCancel={this.onCancel}
+        onSave={this.onSave}
+        defaultValue={defaultValue}
+      />
+    );
+  };
+  /**
+   * 渲染遮罩层div
+   */
+  renderMask = () => {
+    const { openType } = this.state;
+    const isHiden = (openType === 'more' || openType === '');
+      return (
+        <Spring
+        from={{ opacity: 0}}
+        to={{ opacity: isHiden ? 0 : 1}}
+      >
+        {(styles) => {
+          console.log('styles', styles.opacity)
+          if(styles.opacity.animation.to === 0) {
+            return null
+          }
+          return (<animated.div
+            style={styles}
+            className={styles1.mask}
+            onClick={() => {
+              this.onCancel(openType);
+            }}
+          ></animated.div>)
+        }}
+      </Spring>
+      )
+    // if(openType == "area" || openType == "mode" || openType == "price") {
+    //   return (
+    //     <Spring
+    //     from={{ opacity: 0, color: "red" }}
+    //     to={[
+    //       { opacity: 1, color: "#ffaaee" },
+    //       { opacity: 1, color: "rgb(14,26,19)" },
+    //     ]}
+    //   >
+    //     {(styles) => {
+    //       console.log('styles',styles)
+    //       return (<animated.div
+    //         style={styles}
+    //         className={styles1.mask}
+    //         onClick={() => {
+    //           this.onCancel(openType);
+    //         }}
+    //       ></animated.div>)
+    //     }}
+    //   </Spring>
+    //   )
+    // }else {
+    //   return null
+    // }
+    // <div className={styles.mask} onClick={()=> {this.onCancel(openType)}} />
   };
   render() {
     const { titleSelectedStatus, openType } = this.state;
     return (
-      <div className={styles.root}>
+      <div className={styles1.root}>
         {/* 前三个菜单的遮罩层 */}
-        {openType == "area" || openType == "mode" || openType == "price" ? (
-          <div className={styles.mask} onClick={()=> {this.onCancel(openType)}} />
-        ) : null}
-        <div className={styles.content}>
+        {this.renderMask()}
+        <div className={styles1.content}>
           {/* 标题栏 */}
           <FilterTitle
             titleSelectedStatus={titleSelectedStatus}
             onClick={this.onTitleClick}
           />
-
           {/* 前三个菜单对应的内容： */}
           {this.renderFilterPicker()}
           {/* 最后一个菜单对应的内容： */}

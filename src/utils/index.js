@@ -18,7 +18,7 @@ export const getCurrentCity = () => {
               },
             }
           );
-          console.log(reslust)
+          // console.log(reslust)
           localStorage.setItem("hkzf_city", JSON.stringify(reslust.body));
           resolve(reslust.body);
         } catch (e) {
