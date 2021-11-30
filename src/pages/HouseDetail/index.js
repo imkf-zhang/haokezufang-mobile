@@ -145,7 +145,6 @@ export default class HouseDetail extends Component {
   // 渲染地图
   renderMap(community, coord) {
     const { latitude, longitude } = coord;
-
     const map = new BMap.Map("map");
     const point = new BMap.Point(longitude, latitude);
     map.centerAndZoom(point, 17);
