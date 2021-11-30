@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { Flex, WingBlank, WhiteSpace, Toast } from "antd-mobile";
 
 import { Link } from "react-router-dom";
-import { withFormik } from "formik";
-import * as yup from 'yup';
+import { withFormik, Form, Field,ErrorMessage } from "formik";
+import * as yup from "yup";
 
 import API from "../../utils/api";
 
@@ -11,15 +11,10 @@ import NavHeader from "../../components/NavHeader";
 
 import styles from "./index.module.css";
 // 验证规则：
-const REG_UNAME = /^[a-zA-Z_\d]{5,8}$/
-const REG_PWD = /^[a-zA-Z_\d]{5,12}$/
+const REG_UNAME = /^[a-zA-Z_\d]{5,8}$/;
+const REG_PWD = /^[a-zA-Z_\d]{5,12}$/;
 class Login extends Component {
   render() {
-    // 通过props获取高阶组件传递进来的属性
-    const { values, handleChange, handleSubmit, touched, errors, handleBlur } = this.props;
-    // 尝试打印一下接收来的高阶组件的值
-    // console.log(values,handleChange,handleSubmit)
-    console.log(touched, errors)
     return (
       <div className={styles.root}>
         {/* 顶部导航 */}
@@ -28,40 +23,30 @@ class Login extends Component {
         {/* 登录表单 */}
         <WingBlank>
           {/* FIXME:两个input框使用的是一个onChange函数，就是因为有了name属性的原因，name属性必须提供并且和values对象的属性一样（受控组件） */}
-          <form onSubmit={handleSubmit}>
+          <Form>
             <div className={styles.formItem}>
-              <input
+              <Field
                 className={styles.input}
-                value={values.username}
-                onChange={handleChange}
-                onBlur={handleBlur}
                 name="username"
                 placeholder="请输入账号"
-              />
+              ></Field>
             </div>
-            {/* 利用的是短路运算符 */}
-            {errors.username && touched.username && <div className={styles.error}>{errors.username}</div>}
-            {/* 长度为5到8位，只能出现数字、字母、下划线 */}
+            <ErrorMessage className={styles.error} name="username" component="div"></ErrorMessage>
             <div className={styles.formItem}>
-              <input
+            <Field
                 className={styles.input}
-                value={values.password}
-                onChange={handleChange}
-                onBlur={handleBlur}
                 name="password"
                 type="password"
                 placeholder="请输入密码"
-              />
+              ></Field>
             </div>
-            {errors.password && touched.password && <div className={styles.error}>{errors.password}</div>}
-            {/* 长度为5到12位，只能出现数字、字母、下划线 */}
-            {/* <div className={styles.error}>账号为必填项</div> */}
+            <ErrorMessage className={styles.error} name="password" component="div"></ErrorMessage>
             <div className={styles.formSubmit}>
               <button className={styles.submit} type="submit">
                 登 录
               </button>
             </div>
-          </form>
+          </Form>
           <Flex className={styles.backHome}>
             <Flex.Item>
               <Link to="/registe">还没有账号，去注册~</Link>
@@ -86,11 +71,17 @@ Login = withFormik({
   //  },
   // 表单验证
   validationSchema: yup.object().shape({
-    username: yup.string().required('账号为必填项').matches(REG_UNAME,'长度为5到8位，只能出现数字、字母、下划线'),
-    password: yup.string().required('密码为必填项').matches(REG_PWD,'长度为5到8位，只能出现数字、字母、下划线'),
+    username: yup
+      .string()
+      .required("账号为必填项")
+      .matches(REG_UNAME, "长度为5到8位，只能出现数字、字母、下划线"),
+    password: yup
+      .string()
+      .required("密码为必填项")
+      .matches(REG_PWD, "长度为5到8位，只能出现数字、字母、下划线"),
   }),
   // 表单的提交事件
-  handleSubmit: async (values,{props}) => {
+  handleSubmit: async (values, { props }) => {
     console.log("values", values);
     const {
       data: { body, description, status },
