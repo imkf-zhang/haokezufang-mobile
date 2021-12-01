@@ -3,7 +3,7 @@ import Home from "./pages/Home";
 import CityList from "./pages/CityList";
 import Map from "./pages/Map"
 import HouseDetail from "./pages/HouseDetail";
-import Login from "./pages/Login" 
+import Login from "./pages/Login";
 function App() {
   return (
     <Router>
