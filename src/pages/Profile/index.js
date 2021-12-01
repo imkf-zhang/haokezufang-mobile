@@ -1,29 +1,29 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
 
-import { Link } from 'react-router-dom'
-import { Grid, Button } from 'antd-mobile'
+import { Link } from "react-router-dom";
+import { Grid, Button, Modal } from "antd-mobile";
 
-import { isAuth, getToken} from '../../utils/auth'
-import API from '../../utils/api'
-import { BASE_URL } from '../../utils/url'
-import styles from './index.module.css'
+import { isAuth, getToken, removeToken } from "../../utils/auth";
+import API from "../../utils/api";
+import { BASE_URL } from "../../utils/url";
+import styles from "./index.module.css";
 
 // 菜单数据
 const menus = [
-  { id: 1, name: '我的收藏', iconfont: 'icon-coll', to: '/favorate' },
-  { id: 2, name: '我的出租', iconfont: 'icon-ind', to: '/rent' },
-  { id: 3, name: '看房记录', iconfont: 'icon-record' },
+  { id: 1, name: "我的收藏", iconfont: "icon-coll", to: "/favorate" },
+  { id: 2, name: "我的出租", iconfont: "icon-ind", to: "/rent" },
+  { id: 3, name: "看房记录", iconfont: "icon-record" },
   {
     id: 4,
-    name: '成为房主',
-    iconfont: 'icon-identity'
+    name: "成为房主",
+    iconfont: "icon-identity",
   },
-  { id: 5, name: '个人资料', iconfont: 'icon-myinfo' },
-  { id: 6, name: '联系我们', iconfont: 'icon-cust' }
-]
+  { id: 5, name: "个人资料", iconfont: "icon-myinfo" },
+  { id: 6, name: "联系我们", iconfont: "icon-cust" },
+];
 
 // 默认头像
-const DEFAULT_AVATAR = BASE_URL + '/img/profile/avatar.png'
+const DEFAULT_AVATAR = BASE_URL + "/img/profile/avatar.png";
 
 /* 
   1 在 state 中添加两个状态：isLogin（是否登录） 和 userInfo（用户信息）。
@@ -41,47 +41,73 @@ export default class Profile extends Component {
     isLogin: isAuth(),
     // 用户信息
     userInfo: {
-      avatar: '',
-      nickname: ''
-    }
-  }
+      avatar: "",
+      nickname: "",
+    },
+  };
 
   // 注意：不要忘了在进入页面时调用方法 ！
   componentDidMount() {
-    this.getUserInfo()
+    this.getUserInfo();
   }
 
   async getUserInfo() {
     if (!this.state.isLogin) {
       // 未登录
-      return
+      return;
     }
     // 发送请求，获取个人资料
-    const res = await API.get('/user', {
+    const res = await API.get("/user", {
       headers: {
-        authorization: getToken()
-      }
-    })
-
+        authorization: getToken(),
+      },
+    });
     // console.log(res)
     if (res.data.status === 200) {
-      const { avatar, nickname } = res.data.body
+      const { avatar, nickname } = res.data.body;
       this.setState({
         userInfo: {
           avatar: BASE_URL + avatar,
-          nickname
-        }
-      })
+          nickname,
+        },
+      });
     }
   }
+  /**
+   * 退出功能
+   */
+  logout = () => {
+    Modal.alert("提示", "是否确定退出?", [
+      { text: "取消" },
+      {
+        text: "退出",
+        onPress: async () => {
+          await API.post("/user/logout", null, {
+            headers: {
+              authorization: getToken(),
+            },
+          });
+          removeToken();
+          this.setState({
+            isLogin: false,
+            // 用户信息
+            userInfo: {
+              avatar: "",
+              nickname: "",
+            },
+          });
+        },
+      },
+    ]);
+  };
 
   render() {
-    const { history } = this.props
+    const { history } = this.props;
 
     const {
       isLogin,
-      userInfo: { avatar, nickname }
-    } = this.state
+      userInfo: { avatar, nickname },
+    } = this.state;
 
     return (
       <div className={styles.root}>
@@ -89,7 +115,7 @@ export default class Profile extends Component {
         <div className={styles.title}>
           <img
             className={styles.bg}
-            src={BASE_URL + '/img/profile/bg.png'}
+            src={BASE_URL + "/img/profile/bg.png"}
             alt="背景图"
           />
           <div className={styles.info}>
@@ -101,7 +127,7 @@ export default class Profile extends Component {
               />
             </div>
             <div className={styles.user}>
-              <div className={styles.name}>{nickname || '游客'}</div>
+              <div className={styles.name}>{nickname || "游客"}</div>
               {/* 登录后展示： */}
               {isLogin ? (
                 <>
@@ -121,7 +147,7 @@ export default class Profile extends Component {
                     type="primary"
                     size="small"
                     inline
-                    onClick={() => history.push('/login')}
+                    onClick={() => history.push("/login")}
                   >
                     去登录
                   </Button>
@@ -138,7 +164,7 @@ export default class Profile extends Component {
           data={menus}
           columnNum={3}
           hasLine={false}
-          renderItem={item =>
+          renderItem={(item) =>
             item.to ? (
               <Link to={item.to}>
                 <div className={styles.menuItem}>
@@ -157,9 +183,9 @@ export default class Profile extends Component {
 
         {/* 加入我们 */}
         <div className={styles.ad}>
-          <img src={BASE_URL + '/img/profile/join.png'} alt="" />
+          <img src={BASE_URL + "/img/profile/join.png"} alt="" />
         </div>
       </div>
-    )
+    );
   }
 }
