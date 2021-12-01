@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 
-import { Carousel, Flex } from "antd-mobile";
+import { Carousel, Flex, Modal,Toast } from "antd-mobile";
 
 import NavHeader from "../../components/NavHeader";
 import HouseItem from "../../components/HouseItem";
 import HousePackage from "../../components/HousePackage";
 
 import { BASE_URL } from "../../utils/url";
-import { isAuth } from "../../utils/auth";
+import { isAuth,removeToken } from "../../utils/auth";
 import API from "../../utils/api";
 
 import styles from "./index.module.css";
@@ -118,6 +118,51 @@ export default class HouseDetail extends Component {
           isFavorite: body.isFavorite
         };
       });
+    }
+  }
+  /**
+   * 点击了收藏按钮
+   */
+  handleFavorite = async() => {
+    const { history, location, match } = this.props;
+    if(!isAuth()) {
+      Modal.alert("提示", "登陆后才能收藏房源,是否去登陆?", [
+        { text: "取消" },
+        {
+          text: "去登陆",
+          onPress: () => {
+            history.push('/login',{
+              from: location
+            })
+          },
+        },
+      ]);
+    }
+    // 已登录
+    const { isFavorite }  = this.state;
+    const { id } = match.params;
+    if(isFavorite) {
+      // 已收藏
+      const res = await API.delete(`/user/favorites/${id}`)
+      this.setState({
+        isFavorite:false
+      })
+      if (res.data.status === 200) {
+        Toast.info('已取消收藏',1,null,false)
+      }else{
+        Toast.info('登陆超时，请重新登陆',1,null,false)
+      }
+    }else {
+      // 未收藏
+      const res = await API.post(`/user/favorites/${id}`);
+      if (res.data.status === 200) {
+        Toast.info('已收藏',1,null,false);
+        this.setState({
+          isFavorite:true
+        })
+      }else{
+        Toast.info('登陆超时，请重新登陆',1,null,false)
+      }
     }
   }
   /**
@@ -347,7 +392,7 @@ export default class HouseDetail extends Component {
 
         {/* 底部收藏按钮 */}
         <Flex className={styles.fixedBottom}>
-          <Flex.Item>
+          <Flex.Item onClick={this.handleFavorite}>
             <img
               src={BASE_URL + (isFavorite ? "/img/star.png":"/img/unstar.png") }
               className={styles.favoriteImg}
