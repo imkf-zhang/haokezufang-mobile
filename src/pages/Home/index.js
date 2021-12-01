@@ -6,7 +6,7 @@ import { TabBar } from "antd-mobile";
 import Index from "../Index/index";
 import List from "../List/index";
 import News from "../News/index";
-import My from "../My/index";
+import Profile from "../Profile/index";
 
 // 导航栏数据
 const tabItems = [
@@ -71,7 +71,7 @@ class Home extends React.Component {
         <Route exact path="/home" component={Index}></Route>
         <Route path="/home/list" component={List}></Route>
         <Route path="/home/news" component={News}></Route>
-        <Route path="/home/my" component={My}></Route>
+        <Route path="/home/my" component={Profile}></Route>
         <TabBar tintColor="#21b97a" barTintColor="white" noRenderContent>
           {this.renderTabItem()}
         </TabBar>
