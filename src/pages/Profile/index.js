@@ -58,9 +58,9 @@ export default class Profile extends Component {
     }
     // 发送请求，获取个人资料
     const res = await API.get("/user", {
-      headers: {
-        authorization: getToken(),
-      },
+      // headers: {
+      //   authorization: getToken(),
+      // },
     });
     // console.log(res)
     if (res.data.status === 200) {
@@ -71,6 +71,10 @@ export default class Profile extends Component {
           nickname,
         },
       });
+    }else {
+      this.setState({
+        isLogin: false
+      })
     }
   }
   /**
@@ -83,9 +87,9 @@ export default class Profile extends Component {
         text: "退出",
         onPress: async () => {
           await API.post("/user/logout", null, {
-            headers: {
-              authorization: getToken(),
-            },
+            // headers: {
+            //   authorization: getToken(),
+            // },
           });
           removeToken();
           this.setState({
