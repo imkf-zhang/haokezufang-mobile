@@ -74,7 +74,7 @@ class News extends React.Component {
         isLoading: false
       };
     });
-    console.log("获取房屋筛选数据", list, count);
+    // console.log("获取房屋筛选数据", list, count);
   };
   /**
    * 渲染房屋详情列表
@@ -87,7 +87,7 @@ class News extends React.Component {
   }) => {
     const { list } = this.state;
     const house = list[index]; // 滚动的时候index可能会超出list的长度，所以house会出现undefind
-    console.log(house);
+    // console.log(house);
     if (!house) {
       return (
         <div key={key} style={style}>
@@ -124,7 +124,7 @@ class News extends React.Component {
    * @returns { Promise } 在数据完成加载时调用resolve
    */
   loadMoreRows = ({ startIndex, stopIndex }) => {
-    console.log(startIndex, stopIndex);
+    // console.log(startIndex, stopIndex);
     return new Promise((resolve) => {
       //数据加载完成时调用resolve这个方法即可
       API.get("/houses", {

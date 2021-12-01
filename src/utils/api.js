@@ -10,7 +10,7 @@ API.interceptors.request.use(
   function (config) {
     // Do something before request is sent
     // startWith主要是为了判断是不是以其为开头的，因为有此情况dai参数的/user?abc=1
-    console.log(config, config.url);
+    // console.log(config, config.url);
     const { url } = config;
     if (
       url.startsWith("/user") &&
@@ -31,7 +31,7 @@ API.interceptors.request.use(
 API.interceptors.response.use(
   function (response) {
     // Do something with response data
-    console.log("response",response);
+    // console.log("response",response);
     const { data:{ status } } = response;
     if(status === 400) {
       // 此时说明token失效,失效的话就删除token

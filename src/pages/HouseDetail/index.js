@@ -7,6 +7,7 @@ import HouseItem from "../../components/HouseItem";
 import HousePackage from "../../components/HousePackage";
 
 import { BASE_URL } from "../../utils/url";
+import { isAuth } from "../../utils/auth";
 import API from "../../utils/api";
 
 import styles from "./index.module.css";
@@ -94,9 +95,30 @@ export default class HouseDetail extends Component {
       // 房屋描述
       description: "",
     },
+    isFavorite: false
   };
   componentDidMount() {
     this.getHouseDetail();
+    this.checkFavorite();
+  }
+  /**
+   *核实这个房子是否被收藏了 
+   */
+  checkFavorite = async()=> {
+     if(!isAuth()) {
+       return
+     }
+    const { id } = this.props.match.params;
+    const {
+      data: { body,status },
+    } = await API.get(`/user/favorites/${id}`);
+    if(status === 200) {
+      this.setState(() => {
+        return {
+          isFavorite: body.isFavorite
+        };
+      });
+    }
   }
   /**
    * 获取房屋详情数据
@@ -195,6 +217,7 @@ export default class HouseDetail extends Component {
         supporting,
         description
       },
+      isFavorite
     } = this.state;
     return (
       <div className={styles.root}>
@@ -326,11 +349,11 @@ export default class HouseDetail extends Component {
         <Flex className={styles.fixedBottom}>
           <Flex.Item>
             <img
-              src={BASE_URL + "/img/unstar.png"}
+              src={BASE_URL + (isFavorite ? "/img/star.png":"/img/unstar.png") }
               className={styles.favoriteImg}
               alt="收藏"
             />
-            <span className={styles.favorite}>收藏</span>
+            <span className={styles.favorite}>{isFavorite? '已收藏':'收藏'}</span>
           </Flex.Item>
           <Flex.Item>在线咨询</Flex.Item>
           <Flex.Item>

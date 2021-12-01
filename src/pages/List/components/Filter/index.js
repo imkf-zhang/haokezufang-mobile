@@ -260,7 +260,7 @@ export default class Filter extends Component {
         to={{ opacity: isHiden ? 0 : 1}}
       >
         {(styles) => {
-          console.log('styles', styles.opacity)
+          // console.log('styles', styles.opacity)
           if(styles.opacity.animation.to === 0) {
             return null
           }
