@@ -94,7 +94,17 @@ Login = withFormik({
       // 注意：无法在该方法中，通过this来获取到路由信息
       // 所以通过第二个对象参数中获取到props来使用props（参数props指的就是被包裹组件的props）
       // this.props.history.go(-1);
-      props.history.go(-1);
+      // props.history.go(-1);
+      // console.log('props',props)
+      if (!props.location.state) {
+        // 直接进到了登陆页面
+        props.history.go(-1);
+      }else {
+        // 重定向过来的
+        //push:[home,login,map] 用push方法，在当前页返回的还是登陆页，而不是跳转页
+        //replace:[home,login(将map直接替换为了login，返回直接就到了home页面)]
+        props.history.replace(props.location.state.from.pathname)
+      }
     } else {
       Toast.info(description, 2, null, false);
     }
