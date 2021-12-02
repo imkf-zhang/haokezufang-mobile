@@ -48,16 +48,22 @@ const floorData = [
 export default class RentAdd extends Component {
   constructor(props) {
     super(props)
-
+    // console.log(props);
+     const { state } = props.location
+     const  community = {
+      name: '',
+      id: ''
+    }
+     if (state) {
+      //  有小区数据，存储到状态中
+      community.name = state.name;
+      community.id = state.id;
+     }
     this.state = {
       // 临时图片地址
       tempSlides: [],
-
       // 小区的名称和id
-      community: {
-        name: '',
-        id: ''
-      },
+      community,
       // 价格
       price: '',
       // 面积

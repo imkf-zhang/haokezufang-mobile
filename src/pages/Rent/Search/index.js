@@ -10,24 +10,30 @@ import styles from "./index.module.css";
 export default class Search extends Component {
   // 当前城市id
   cityId = getCity().value;
-
+   
   state = {
     // 搜索框的值
     searchTxt: "",
     tipsList: [],
   };
-
+  timerId = null
   // 渲染搜索结果列表
   renderTips = () => {
     const { tipsList } = this.state;
 
     return tipsList.map((item) => (
-      <li key={item.community} className={styles.tip}>
+      <li key={item.community} className={styles.tip} onClick={()=> {this.onTipsClick(item)}}>
         {item.communityName}
       </li>
     ));
   };
-  handleSearchTxt = async (value) => {
+  onTipsClick = (item) => {
+  this.props.history.replace('/rent/add',{
+    name: item.communityName,
+    id: item.community
+  })
+  }
+  handleSearchTxt = (value) => {
     this.setState({
       searchTxt: value,
     });
@@ -36,15 +42,18 @@ export default class Search extends Component {
         tipsList: []
       });
     } else {
-      const { data: { body} } = await API.get("/area/community",{
-        params: {
-          name: value,
-          id: this.cityId
-        },
-      });
-     this.setState({
-       tipsList: body
-     })
+      clearTimeout(this.timerId)
+      this.timerId =  setTimeout(async ()=>{
+        const { data: { body} } = await API.get("/area/community",{
+          params: {
+            name: value,
+            id: this.cityId
+          },
+        });
+       this.setState({
+         tipsList: body
+       })
+      },500)
     }
   };
   render() {
