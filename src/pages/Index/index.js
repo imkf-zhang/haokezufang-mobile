@@ -13,7 +13,7 @@ const navs = [
   { id: 1, path: "/home/list", nav: Nav1, title: "整租" },
   { id: 2, path: "/home/list", nav: Nav2, title: "合租" },
   { id: 3, path: "/home/dtzf", nav: Nav3, title: "地图找房" },
-  { id: 4, path: "/home/qcz", nav: Nav4, title: "去出租" },
+  { id: 4, path: "/rent/add", nav: Nav4, title: "去出租" },
 ];
 // 获取地理位置信息
 // navigator.geolocation.getCurrentPosition(position => {

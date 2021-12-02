@@ -4,6 +4,7 @@ import { Route } from "react-router-dom";
 import { TabBar } from "antd-mobile";
 // 组件
 import Index from "../Index/index";
+// 默认导出的名字可以在导入时随意的再命名
 import List from "../List/index";
 import News from "../News/index";
 import Profile from "../Profile/index";

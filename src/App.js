@@ -4,7 +4,11 @@ import CityList from "./pages/CityList";
 import Map from "./pages/Map"
 import HouseDetail from "./pages/HouseDetail";
 import Login from "./pages/Login";
-// import AuthRoute from "./components/AuthRoute";
+// 导入房源发布页面
+import Rent from "./pages/Rent";
+import RentAdd from "./pages/Rent/Add/index"
+import RentSearch from "./pages/Rent/Search/index"
+import AuthRoute from "./components/AuthRoute";
 function App() {
   return (
     <Router>
@@ -17,6 +21,10 @@ function App() {
         <Route path="/map" component={Map}></Route>
         <Route path="/detail/:id" component={HouseDetail}></Route>
         <Route path="/login" component={Login}></Route>
+        {/* 配置登陆后才能访问的页面 */}
+        <AuthRoute exact path="/rent" component={Rent}></AuthRoute>
+        <AuthRoute path="/rent/add" component={RentAdd}></AuthRoute>
+        <AuthRoute path="/rent/search" component={RentSearch}></AuthRoute>
       </div>
     </Router>
   );
