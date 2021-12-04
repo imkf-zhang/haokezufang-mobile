@@ -108,6 +108,14 @@ export default class RentAdd extends Component {
       [name]: value,
     });
   };
+  /**
+   * 获取防护配置数据 
+   */
+  handleSupporting = (selected) => {
+    this.setState({
+      supporting: selected.join('|')
+    })
+  }
   render() {
     const Item = List.Item;
     const { history } = this.props;
@@ -212,7 +220,7 @@ export default class RentAdd extends Component {
           renderHeader={() => "房屋配置"}
           data-role="rent-list"
         >
-          <HousePackge select />
+          <HousePackge select onSelect={this.handleSupporting} />
         </List>
 
         <List

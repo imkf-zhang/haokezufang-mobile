@@ -84,9 +84,9 @@ class HousePackage extends Component {
       // 未选中：添加到数组中
       newSelectedNames = [...selectedNames, name]
     }
-
+     console.log(this.props,newSelectedNames)
     // 传递给父组件
-    // this.props.onSelect(newSelectedNames)
+    this.props.onSelect(newSelectedNames)
 
     this.setState({
       selectedNames: newSelectedNames
@@ -134,7 +134,7 @@ class HousePackage extends Component {
     return <ul className={styles.root}>{this.renderItems()}</ul>
   }
 }
-HousePackage.defaultProps = {
-  onselect: () => {}
-}
+// HousePackage.defaultProps = {
+//   onselect: () => {}
+// }
 export default HousePackage
