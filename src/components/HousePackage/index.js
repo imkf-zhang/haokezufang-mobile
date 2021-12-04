@@ -68,7 +68,9 @@ class HousePackage extends Component {
     // 选中名称
     selectedNames: []
   }
-
+ componentDidMount() {
+   console.log("props",this.props)
+ }
   // 根据id切换选中状态
   toggleSelect = name => {
     const { selectedNames } = this.state
@@ -84,7 +86,7 @@ class HousePackage extends Component {
     }
 
     // 传递给父组件
-    this.props.onSelect(newSelectedNames)
+    // this.props.onSelect(newSelectedNames)
 
     this.setState({
       selectedNames: newSelectedNames

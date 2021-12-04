@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
 
 import {
   Flex,
@@ -7,100 +7,110 @@ import {
   Picker,
   ImagePicker,
   TextareaItem,
-  Modal
-} from 'antd-mobile'
+  Modal,
+} from "antd-mobile";
 
-import NavHeader from '../../../components/NavHeader'
-import HousePackge from '../../../components/HousePackage'
+import NavHeader from "../../../components/NavHeader";
+import HousePackge from "../../../components/HousePackage";
 
-import styles from './index.module.css'
+import styles from "./index.module.css";
 
-const alert = Modal.alert
+const alert = Modal.alert;
 
 // 房屋类型
 const roomTypeData = [
-  { label: '一室', value: 'ROOM|d4a692e4-a177-37fd' },
-  { label: '二室', value: 'ROOM|d1a00384-5801-d5cd' },
-  { label: '三室', value: 'ROOM|20903ae0-c7bc-f2e2' },
-  { label: '四室', value: 'ROOM|ce2a5daa-811d-2f49' },
-  { label: '四室+', value: 'ROOM|2731c38c-5b19-ff7f' }
-]
+  { label: "一室", value: "ROOM|d4a692e4-a177-37fd" },
+  { label: "二室", value: "ROOM|d1a00384-5801-d5cd" },
+  { label: "三室", value: "ROOM|20903ae0-c7bc-f2e2" },
+  { label: "四室", value: "ROOM|ce2a5daa-811d-2f49" },
+  { label: "四室+", value: "ROOM|2731c38c-5b19-ff7f" },
+];
 
 // 朝向：
 const orientedData = [
-  { label: '东', value: 'ORIEN|141b98bf-1ad0-11e3' },
-  { label: '西', value: 'ORIEN|103fb3aa-e8b4-de0e' },
-  { label: '南', value: 'ORIEN|61e99445-e95e-7f37' },
-  { label: '北', value: 'ORIEN|caa6f80b-b764-c2df' },
-  { label: '东南', value: 'ORIEN|dfb1b36b-e0d1-0977' },
-  { label: '东北', value: 'ORIEN|67ac2205-7e0f-c057' },
-  { label: '西南', value: 'ORIEN|2354e89e-3918-9cef' },
-  { label: '西北', value: 'ORIEN|80795f1a-e32f-feb9' }
-]
+  { label: "东", value: "ORIEN|141b98bf-1ad0-11e3" },
+  { label: "西", value: "ORIEN|103fb3aa-e8b4-de0e" },
+  { label: "南", value: "ORIEN|61e99445-e95e-7f37" },
+  { label: "北", value: "ORIEN|caa6f80b-b764-c2df" },
+  { label: "东南", value: "ORIEN|dfb1b36b-e0d1-0977" },
+  { label: "东北", value: "ORIEN|67ac2205-7e0f-c057" },
+  { label: "西南", value: "ORIEN|2354e89e-3918-9cef" },
+  { label: "西北", value: "ORIEN|80795f1a-e32f-feb9" },
+];
 
 // 楼层
 const floorData = [
-  { label: '高楼层', value: 'FLOOR|1' },
-  { label: '中楼层', value: 'FLOOR|2' },
-  { label: '低楼层', value: 'FLOOR|3' }
-]
+  { label: "高楼层", value: "FLOOR|1" },
+  { label: "中楼层", value: "FLOOR|2" },
+  { label: "低楼层", value: "FLOOR|3" },
+];
 
 export default class RentAdd extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     // console.log(props);
-     const { state } = props.location
-     const  community = {
-      name: '',
-      id: ''
-    }
-     if (state) {
+    const { state } = props.location;
+    const community = {
+      name: "",
+      id: "",
+    };
+    if (state) {
       //  有小区数据，存储到状态中
       community.name = state.name;
       community.id = state.id;
-     }
+    }
     this.state = {
       // 临时图片地址
       tempSlides: [],
       // 小区的名称和id
       community,
       // 价格
-      price: '',
+      price: "",
       // 面积
-      size: 0,
+      size: '',
       // 房屋类型
-      roomType: '',
+      roomType: "",
       // 楼层
-      floor: '',
+      floor: "",
       // 朝向：
-      oriented: '',
+      oriented: "",
       // 房屋标题
-      title: '',
+      title: "",
       // 房屋图片
-      houseImg: '',
+      houseImg: "",
       // 房屋配套：
-      supporting: '',
+      supporting: "",
       // 房屋描述
-      description: ''
-    }
+      description: "",
+    };
   }
 
   // 取消编辑，返回上一页
   onCancel = () => {
-    alert('提示', '放弃发布房源?', [
+    alert("提示", "放弃发布房源?", [
       {
-        text: '放弃',
-        onPress: async () => this.props.history.go(-1)
+        text: "放弃",
+        onPress: async () => this.props.history.go(-1),
       },
       {
-        text: '继续编辑'
-      }
-    ])
-  }
-
+        text: "继续编辑",
+      },
+    ]);
+  };
+  /**
+   * InputItem  Picker TextareaItem
+   * 好多组件都支持onchange，可以封装一个getValue方法来处理
+   * @returns
+   */
+  getValue = (name, value) => {
+    console.log(name, value);
+    this.setState({
+      [name]: value,
+    });
+  };
   render() {
-    const Item = List.Item
-    const { history } = this.props
+    const Item = List.Item;
+    const { history } = this.props;
     const {
       community,
       price,
@@ -109,8 +119,9 @@ export default class RentAdd extends Component {
       oriented,
       description,
       tempSlides,
-      title
-    } = this.state
+      title,
+      size,
+    } = this.state;
 
     return (
       <div className={styles.root}>
@@ -118,33 +129,53 @@ export default class RentAdd extends Component {
 
         <List
           className={styles.header}
-          renderHeader={() => '房源信息'}
+          renderHeader={() => "房源信息"}
           data-role="rent-list"
         >
           {/* 选择所在小区 */}
           <Item
-            extra={community.name || '请输入小区名称'}
+            extra={community.name || "请输入小区名称"}
             arrow="horizontal"
-            onClick={() => history.replace('/rent/search')}
+            onClick={() => history.replace("/rent/search")}
           >
             小区名称
           </Item>
-          <InputItem placeholder="请输入租金/月" extra="￥/月" value={price}>
+          <InputItem
+            onChange={(val) => {
+              this.getValue("price", val);
+            }}
+            placeholder="请输入租金/月"
+            extra="￥/月"
+            value={price}
+          >
             租&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;金
           </InputItem>
-          <InputItem placeholder="请输入建筑面积" extra="㎡">
+          <InputItem
+            value={size}
+            onChange={(val) => {
+              this.getValue("size", val);
+            }}
+            placeholder="请输入建筑面积"
+            extra="㎡"
+          >
             建筑面积
           </InputItem>
-          <Picker data={roomTypeData} value={[roomType]} cols={1}>
+          <Picker data={roomTypeData} value={[roomType]} cols={1}  onChange={(val) => {
+              this.getValue("roomType", val[0]);
+            }}>
             <Item arrow="horizontal">
               户&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型
             </Item>
           </Picker>
 
-          <Picker data={floorData} value={[floor]} cols={1}>
+          <Picker data={floorData} value={[floor]} cols={1}  onChange={(val) => {
+              this.getValue("floor", val[0]);
+            }}>
             <Item arrow="horizontal">所在楼层</Item>
           </Picker>
-          <Picker data={orientedData} value={[oriented]} cols={1}>
+          <Picker data={orientedData} value={[oriented]} cols={1} onChange={(val) => {
+              this.getValue("oriented", val[0]);
+            }}>
             <Item arrow="horizontal">
               朝&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;向
             </Item>
@@ -153,18 +184,20 @@ export default class RentAdd extends Component {
 
         <List
           className={styles.title}
-          renderHeader={() => '房屋标题'}
+          renderHeader={() => "房屋标题"}
           data-role="rent-list"
         >
           <InputItem
             placeholder="请输入标题（例如：整租 小区名 2室 5000元）"
-            value={title}
+            value={title} onChange={(val) => {
+              this.getValue("title", val);
+            }}
           />
         </List>
 
         <List
           className={styles.pics}
-          renderHeader={() => '房屋图像'}
+          renderHeader={() => "房屋图像"}
           data-role="rent-list"
         >
           <ImagePicker
@@ -176,7 +209,7 @@ export default class RentAdd extends Component {
 
         <List
           className={styles.supporting}
-          renderHeader={() => '房屋配置'}
+          renderHeader={() => "房屋配置"}
           data-role="rent-list"
         >
           <HousePackge select />
@@ -184,14 +217,20 @@ export default class RentAdd extends Component {
 
         <List
           className={styles.desc}
-          renderHeader={() => '房屋描述'}
-          data-role="rent-list"
+          renderHeader={() => "房屋描述"}
+          data-role="rent-list" 
+          onChange={(val) => {
+            this.getValue("title", val);
+          }}
         >
           <TextareaItem
             rows={5}
             placeholder="请输入房屋描述信息"
             autoHeight
             value={description}
+            onChange={(val) => {
+              this.getValue("description", val);
+            }}
           />
         </List>
 
@@ -204,6 +243,6 @@ export default class RentAdd extends Component {
           </Flex.Item>
         </Flex>
       </div>
-    )
+    );
   }
 }
