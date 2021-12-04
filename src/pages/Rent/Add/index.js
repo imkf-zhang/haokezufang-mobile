@@ -8,11 +8,11 @@ import {
   ImagePicker,
   TextareaItem,
   Modal,
+  Toast
 } from "antd-mobile";
-
 import NavHeader from "../../../components/NavHeader";
 import HousePackge from "../../../components/HousePackage";
-
+import API from "../../../utils/api";
 import styles from "./index.module.css";
 
 const alert = Modal.alert;
@@ -116,6 +116,52 @@ export default class RentAdd extends Component {
       supporting: selected.join('|')
     })
   }
+  /**
+   * 处理房屋图片
+   * @returns 
+   */
+   handleHouseImg = (files, type, index) => {
+    console.log(files, type, index);
+    // this.setState({
+    //   files,
+    // });
+    this.setState({
+      tempSlides: files
+    })
+   }
+  /**
+   * 点击了提交按钮
+   * @returns 
+   */
+   addHouse = async() => {
+     const { tempSlides,size,community,floor,
+      title,description,oriented,supporting,price,roomType } = this.state;
+     if (tempSlides.length === 0) {
+       return
+     }
+     let houseImg = '';
+     const form = new FormData();
+     tempSlides.forEach(item => {
+       form.append('file',item.file)
+     })
+     const { data: {body}} = await API.post('/houses/image', form,{
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+     })
+     houseImg = body.join('|')
+    //  发布房源
+    const {status }   = API.post('/user/houses', {
+      size,community: community.id,floor,houseImg,
+      title,description,oriented,supporting,price,roomType
+     })
+     if (status === 200) {
+      Toast.info('发布成功', 1,null,false);
+      this.props.history.push('/rent')
+     }else {
+      Toast.info('服务器偷懒了，稍后再试一试', 2,null,false);
+     }
+   }
   render() {
     const Item = List.Item;
     const { history } = this.props;
@@ -209,6 +255,7 @@ export default class RentAdd extends Component {
           data-role="rent-list"
         >
           <ImagePicker
+          onChange={this.handleHouseImg}
             files={tempSlides}
             multiple={true}
             className={styles.imgpicker}
