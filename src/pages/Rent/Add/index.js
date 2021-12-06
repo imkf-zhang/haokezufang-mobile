@@ -151,7 +151,7 @@ export default class RentAdd extends Component {
      })
      houseImg = body.join('|')
     //  发布房源
-    const {status }   = API.post('/user/houses', {
+    const {data: { status }}   = await API.post('/user/houses', {
       size,community: community.id,floor,houseImg,
       title,description,oriented,supporting,price,roomType
      })
@@ -274,9 +274,6 @@ export default class RentAdd extends Component {
           className={styles.desc}
           renderHeader={() => "房屋描述"}
           data-role="rent-list" 
-          onChange={(val) => {
-            this.getValue("title", val);
-          }}
         >
           <TextareaItem
             rows={5}
